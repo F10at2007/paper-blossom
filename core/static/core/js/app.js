@@ -5,7 +5,7 @@
   document.addEventListener('click', (event) => {
     const button = event.target.closest('[data-placeholder]');
     if (!button) return;
-    message.textContent = `「${button.dataset.placeholder}」将在后续阶段开放。当前仅展示页面与操作入口，不会修改、保存或下载作品。`;
+    message.textContent = `「${button.dataset.placeholder}」将在后续阶段开放。此入口目前仅用于展示，不会执行该操作。`;
     dialog.showModal();
   });
   dialog.addEventListener('click', (event) => {

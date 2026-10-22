@@ -20,8 +20,15 @@ class WorkshopPagesTests(TestCase):
                 self.assertContains(self.client.get(reverse('core:modes')), url)
                 response = self.client.get(url)
                 self.assertContains(response, mode['name'])
-                self.assertContains(response, '静态示意 · 当前不可绘制')
-                self.assertContains(response, 'data-placeholder="保存作品"')
+                if mode['slug'] == 'free':
+                    self.assertContains(response, 'id="drawing-canvas"')
+                    self.assertContains(response, 'data-action="download"')
+                    self.assertContains(response, 'js/free-workshop.js')
+                    self.assertNotContains(response, '静态示意 · 当前不可绘制')
+                else:
+                    self.assertContains(response, '静态示意 · 当前不可绘制')
+                    self.assertContains(response, 'data-placeholder="保存作品"')
+                    self.assertNotContains(response, 'js/free-workshop.js')
                 self.assertTemplateUsed(response, 'core/workshop.html')
 
     def test_unknown_mode_is_not_a_workshop(self):

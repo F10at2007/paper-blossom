@@ -1,0 +1,41 @@
+<div class="workspace free-workspace" id="free-workspace">
+  {% include 'core/components/toolbar.html' %}
+  <div class="canvas-panel">
+    <div class="canvas-top">
+      <span>自由剪纸 <small>· 未保存</small></span>
+      <div class="history-actions">
+        <button type="button" data-action="undo" aria-label="撤销上一次剪裁" title="撤销" disabled>↶</button>
+        <button type="button" data-action="redo" aria-label="重做剪裁" title="重做" disabled>↷</button>
+        <span></span><button type="button" data-action="clear" disabled>清空</button>
+      </div>
+    </div>
+    <div class="canvas-area">
+      <span class="canvas-corner top-left"></span><span class="canvas-corner bottom-right"></span>
+      <div class="paper-sheet cut-paper checkerboard">
+        <canvas id="paper-canvas" width="1024" height="1024" aria-label="当前剪纸作品"></canvas>
+        <canvas id="drawing-canvas" width="1024" height="1024" aria-label="自由剪纸画布：按下并拖动，松开后自动闭合，圈内区域将被剪去" aria-describedby="cut-instruction" tabindex="0">浏览器需支持 Canvas 2D。</canvas>
+      </div>
+      <p id="cut-instruction">画出轮廓，剪去圈内的纸<span>松手自动闭合 · 棋盘格表示透明镂空</span></p>
+    </div>
+    <div class="canvas-bottom"><span id="cut-count">已剪 0 次 / 1 : 1</span><span>PNG · 2048 × 2048</span></div>
+  </div>
+  <aside class="preview-panel">
+    <div class="panel-heading"><h2>作品预览</h2><span>实时</span></div>
+    <div class="preview-art checkerboard"><canvas id="preview-canvas" width="320" height="320" aria-label="剪纸作品实时预览"></canvas></div>
+    <p class="preview-caption">自由剪艺 · 透明底作品</p>
+    <button type="button" class="button secondary full" data-action="preview">放大预览 <span>⤢</span></button>
+    <div class="preview-actions">
+      <button type="button" class="button secondary full" data-placeholder="本地保存作品">保存作品 <span>待开放</span></button>
+      <button type="button" class="button primary full" data-action="download">下载作品 <span>↓</span></button>
+    </div>
+    <p class="placeholder-note">下载透明底 PNG，保留镂空。作品仅在当前页面内保留，离开或刷新会丢失。</p>
+    <p class="workshop-status" id="workshop-status" role="status" aria-live="polite">纸已铺好，试着剪下第一片形状。</p>
+  </aside>
+</div>
+<dialog id="paper-preview-dialog" aria-labelledby="paper-preview-title">
+  <form method="dialog"><button class="dialog-close" aria-label="关闭作品预览">×</button></form>
+  <p class="eyebrow">PAPER STUDY / 自由剪艺</p><h2 id="paper-preview-title">你的纸上心意</h2>
+  <div class="large-preview checkerboard"><canvas id="large-preview-canvas" width="1024" height="1024" aria-label="放大剪纸作品"></canvas></div>
+  <p>棋盘格为预览背景，不会出现在下载的 PNG 中。</p>
+  <form method="dialog"><button class="button secondary">返回创作 <span>←</span></button></form>
+</dialog>
