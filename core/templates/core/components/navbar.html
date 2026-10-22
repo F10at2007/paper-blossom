@@ -1,0 +1,5 @@
+<header class="header wrap">
+  <a class="brand" href="{% url 'core:index' %}" aria-label="一纸生花首页"><span class="brand-seal" aria-hidden="true">花</span><span>一纸生花<small>PAPER BLOOMS</small></span></a>
+  <nav aria-label="主导航"><a href="{% url 'core:index' %}" {% if page == 'home' %}aria-current="page"{% endif %}>工坊首页</a><a href="{% url 'core:modes' %}" {% if page == 'modes' or page == 'workshop' %}aria-current="page"{% endif %}>剪纸工坊</a><a href="{% url 'core:works' %}" {% if page == 'works' %}aria-current="page"{% endif %}>我的作品</a></nav>
+  <span class="header-note"><i></i> 一纸，一剪，万千可能</span>
+</header>

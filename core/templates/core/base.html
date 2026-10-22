@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#a63127">
+  <meta name="description" content="一纸生花，以传统剪纸为灵感的数字创作工坊。在一折一剪之间，发现纸上的无限可能。">
+  <title>{% block title %}一纸生花 · 数字剪纸工坊{% endblock %}</title>
+  <link rel="icon" href="{% static 'core/art/flower.svg' %}" type="image/svg+xml">
+  <link rel="stylesheet" href="{% static 'core/css/site.css' %}">
+  <script src="{% static 'core/js/app.js' %}" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  {% include 'core/components/navbar.html' %}
+  <main id="main">{% block content %}{% endblock %}</main>
+  <footer class="footer wrap"><a class="footer-brand" href="{% url 'core:index' %}">一纸生花 <span>让传统，在指尖焕新。</span></a><p>© 2026 一纸生花 · 网页设计竞赛作品 <span>匠心传成，非遗焕新</span></p></footer>
+  <dialog id="notice-dialog" aria-labelledby="notice-title">
+    <form method="dialog"><button class="dialog-close" aria-label="关闭提示">×</button></form>
+    <span class="eyebrow">工坊小笺 / PHASE 01</span><h2 id="notice-title">这份手艺，正在打磨</h2><p id="notice-message"></p>
+    <form method="dialog"><button class="button primary">知道了 <span>✓</span></button></form>
+  </dialog>
+</body>
+</html>
