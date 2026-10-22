@@ -1,9 +1,9 @@
 {% if mode.slug == 'fold' %}<div class="fold-progress" aria-label="折纸创作步骤"><span data-step="choose" aria-current="step"><b>01</b>选择折法</span><span data-step="editing"><b>02</b>折纸剪裁</span><span data-step="unfolded"><b>03</b>展开成花</span></div>{% endif %}
-<div class="workspace free-workspace{% if mode.slug == 'fold' %} fold-workspace{% endif %}" id="{% if mode.slug == 'fold' %}fold-workspace{% else %}free-workspace{% endif %}" data-mode="{{ mode.slug }}"{% if mode.slug == 'fold' %} data-state="choose"{% endif %}>
+<div class="workspace free-workspace{% if mode.slug == 'fold' %} fold-workspace{% endif %}" id="{% if mode.slug == 'fold' %}fold-workspace{% elif mode.slug == 'trace' %}trace-workspace{% else %}free-workspace{% endif %}" data-mode="{{ mode.slug }}"{% if mode.slug == 'fold' %} data-state="choose"{% endif %}>
   {% include 'core/components/toolbar.html' %}
   <div class="canvas-panel">
     <div class="canvas-top">
-      <span>{% if mode.slug == 'fold' %}<span id="fold-name">请选择折叠方式</span>{% else %}自由剪纸{% endif %} <small>· 未保存</small></span>
+      <span>{% if mode.slug == 'fold' %}<span id="fold-name">请选择折叠方式</span>{% else %}{{ mode.name }}{% endif %} <small data-work-name>未命名作品 · 未保存</small></span>
       <div class="history-actions">
         <button type="button" data-action="undo" aria-label="撤销上一次剪裁" title="撤销" disabled>↶</button>
         <button type="button" data-action="redo" aria-label="重做剪裁" title="重做" disabled>↷</button>
@@ -27,14 +27,15 @@
     <div class="panel-heading"><h2>作品预览</h2><span>实时</span></div>
     <div class="preview-art checkerboard"><canvas id="preview-canvas" width="320" height="320" aria-label="剪纸作品实时预览"></canvas></div>
     <p class="preview-caption">{% if mode.slug == 'fold' %}完整作品 · 实时映射{% else %}自由剪艺 · 透明底作品{% endif %}</p>
+    {% elif mode.slug == 'trace' %}<div class="panel-heading"><h2>临摹练习</h2><span>观察与表达</span></div><p data-trace-state>临摹中 · 按你的节奏来</p><button type="button" class="button secondary full" data-action="compare">查看对比 <span>⤢</span></button><button type="button" class="button primary full trace-complete" data-action="complete">完成作品 ✓</button>
     {% else %}<div class="panel-heading"><h2>折纸操作</h2><span>先剪后展</span></div><p class="fold-result-note">剪裁时只看折叠纸片。<br>点击展开，揭晓完整作品。</p>{% endif %}
     {% if mode.slug == 'fold' %}<button type="button" class="button primary full fold-toggle" data-action="unfold" disabled>展开作品 <span>↗</span></button>{% endif %}
-    {% if mode.slug == 'free' %}<button type="button" class="button secondary full" data-action="preview">放大预览 <span>⤢</span></button>{% endif %}
+    {% if mode.slug == 'free' %}<button type="button" class="button secondary full" data-action="preview">完成并预览 <span>⤢</span></button>{% endif %}
     <div class="preview-actions">
-      <button type="button" class="button secondary full" data-placeholder="本地保存作品">保存作品 <span>待开放</span></button>
+      <button type="button" class="button secondary full" data-action="save">保存作品 <span>＋</span></button>
       <button type="button" class="button primary full" data-action="download">下载作品 <span>↓</span></button>
     </div>
-    <p class="placeholder-note">{% if mode.slug == 'fold' %}请先展开查看完整作品，再下载透明底 PNG。{% else %}下载透明底 PNG，保留镂空。{% endif %}作品仅在当前页面内保留，离开或刷新会丢失。</p>
+    <p class="placeholder-note">{% if mode.slug == 'fold' %}请先展开查看完整作品，再下载透明底 PNG。{% else %}下载透明底 PNG，保留镂空。{% endif %}点击保存后可在“我的作品”恢复。未保存的修改会在刷新后丢失。</p>
     <p class="workshop-status" id="workshop-status" role="status" aria-live="polite">纸已铺好，试着剪下第一片形状。</p>
   </aside>
 </div>
@@ -45,3 +46,5 @@
   <p>棋盘格为预览背景，不会出现在下载的 PNG 中。</p>
   <form method="dialog"><button class="button secondary">返回创作 <span>←</span></button></form>
 </dialog>{% endif %}
+
+{% if mode.slug == 'trace' %}{% include 'core/components/trace_compare.html' %}{% endif %}

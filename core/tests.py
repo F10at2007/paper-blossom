@@ -12,7 +12,7 @@ class WorkshopPagesTests(TestCase):
                 self.assertContains(response, '一纸生花')
                 self.assertContains(response, reverse('core:modes'))
 
-    def test_each_mode_has_a_shared_workshop_and_clear_placeholder(self):
+    def test_four_interactive_modes_have_canvas_and_manual_save(self):
         self.assertEqual(len(MODES), 4)
         for mode in MODES:
             url = reverse('core:workshop', args=[mode['slug']])
@@ -20,21 +20,24 @@ class WorkshopPagesTests(TestCase):
                 self.assertContains(self.client.get(reverse('core:modes')), url)
                 response = self.client.get(url)
                 self.assertContains(response, mode['name'])
-                if mode['slug'] in ('free', 'fold'):
-                    self.assertContains(response, 'id="drawing-canvas"')
-                    self.assertContains(response, 'data-action="download"')
+                self.assertContains(response, 'id="drawing-canvas"')
+                self.assertContains(response, 'data-action="download"')
+                self.assertContains(response, 'data-action="save"')
+                if mode['slug'] in ('free','fold'):
                     self.assertContains(response, 'js/free-workshop.js')
-                    self.assertNotContains(response, '静态示意 · 当前不可绘制')
-                else:
-                    self.assertContains(response, '静态示意 · 当前不可绘制')
-                    self.assertContains(response, 'data-placeholder="保存作品"')
-                    self.assertNotContains(response, 'js/free-workshop.js')
+                elif mode['slug']=='trace':
+                    self.assertContains(response,'js/trace-workshop.js')
+                    self.assertContains(response,'id="reference-canvas"')
+                else:self.assertContains(response,'js/compose-workshop.js')
+                self.assertNotContains(response,'静态示意 · 当前不可绘制')
                 self.assertTemplateUsed(response, 'core/workshop.html')
 
     def test_unknown_mode_is_not_a_workshop(self):
         self.assertEqual(self.client.get('/workshop/unknown/').status_code, 404)
 
-    def test_examples_are_separate_from_empty_collection(self):
+    def test_works_has_real_storage_management_without_fake_examples(self):
         response = self.client.get(reverse('core:works'))
-        self.assertContains(response, '还没有作品')
-        self.assertContains(response, '布局示例 · 非真实作品')
+        self.assertContains(response,'id="works-list"')
+        self.assertContains(response,'id="works-empty"')
+        self.assertContains(response,'js/my-works.js')
+        self.assertNotContains(response,'布局示例 · 非真实作品')

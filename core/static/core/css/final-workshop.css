@@ -1,0 +1,60 @@
+html {scrollbar-gutter:stable}
+[hidden] {display:none!important}
+.reference-choices {display:grid;gap:8px}
+.reference-choices button {display:flex;justify-content:space-between;gap:8px;border:1px solid var(--line);padding:10px;background:var(--paper);font-size:12px}
+.reference-choices button small {font-size:9px;color:var(--muted)}
+.reference-choices button[aria-pressed="true"] {color:var(--red);border-color:var(--red);background:#f4e9df}
+.reference-image canvas {width:100%;height:auto;display:block}
+.reference-toggle {margin:12px 0;font-size:10px;cursor:pointer}
+.reference-description,.asset-note {font-size:10px;color:var(--muted);line-height:1.9;margin-top:12px}
+.asset-note {margin-top:auto;padding-top:20px}
+.trace-complete {margin-top:12px}
+#trace-workspace [data-trace-state] {font-size:11px;color:var(--muted);margin-bottom:24px;min-height:40px}
+#trace-compare {width:min(780px,calc(100% - 36px));max-width:780px;max-height:calc(100dvh - 40px);overflow:auto}
+.compare-grid {display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:20px}
+.compare-grid figure {margin:0;min-width:0}
+.compare-grid canvas {display:block;width:100%;height:auto}
+.compare-grid figcaption {font-size:11px;color:var(--muted);margin-top:12px;text-align:center}
+#trace-compare>p:not(.eyebrow) {font-size:12px}
+[data-work-name] {overflow-wrap:anywhere}
+button:disabled {cursor:not-allowed}
+.category-tabs {display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-bottom:16px}
+.category-tabs button {font-size:10px;padding:5px 2px;border-bottom:1px solid var(--line)}
+.category-tabs [aria-pressed="true"] {color:var(--red);border-color:var(--red)}
+.motif-library {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.motif-library button {border:1px solid var(--line);background:var(--paper);padding:4px;min-width:0}
+.motif-library button:hover {border-color:var(--red)}
+.motif-library canvas {display:block;width:100%;height:auto}
+.motif-library span {font-size:9px;display:block}
+.object-controls {display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.object-controls button {border:1px solid var(--line);background:var(--paper);padding:9px 5px;font-size:11px}
+.object-controls button:hover:not(:disabled) {border-color:var(--red);color:var(--red)}
+.object-controls button:last-child {grid-column:1/-1}
+#object-settings {min-height:45px;margin-bottom:20px}
+#compose-preview {width:min(650px,calc(100% - 36px));max-width:650px;max-height:calc(100dvh - 40px);overflow:auto}
+.compose-workspace #drawing-canvas {cursor:grab}
+.compose-workspace #drawing-canvas:active {cursor:grabbing}
+.saved-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:28px}
+.saved-work {border:1px solid var(--line);background:var(--white);min-width:0}
+.saved-thumbnail {min-height:180px;aspect-ratio:1.6;display:grid;place-items:center}
+.saved-thumbnail img {width:160px;height:160px;object-fit:contain}
+.saved-info {padding:22px;overflow-wrap:anywhere}
+.saved-info h2 {font-size:25px;margin:6px 0 10px}
+.saved-time {font-size:10px;color:var(--muted)}
+.saved-actions {display:flex;flex-wrap:wrap;gap:14px;margin-top:20px;font-size:11px;color:var(--red)}
+.saved-actions button {padding:0;font-size:11px}
+.saved-actions a:hover,.saved-actions button:hover {text-decoration:underline}
+#works-filter {font:inherit;color:var(--ink);border:1px solid var(--line);background:var(--paper);padding:6px 12px;margin-left:12px}
+.collection-bar label {font-size:11px;color:var(--muted)}
+.works-status {font-size:12px;color:var(--red);min-height:32px;margin:20px 0;overflow-wrap:anywhere}
+.local-record-note {display:flex;align-items:center;justify-content:space-between;gap:28px;background:#eee8dc;padding:30px;margin-top:30px}
+.local-record-note h2 {font-size:23px;margin-bottom:10px}
+.local-record-note p {font-size:11px;color:var(--muted);max-width:660px;line-height:2}
+.backup-actions {display:flex;gap:12px;flex-shrink:0}.backup-actions button {font-size:11px;padding-inline:16px}
+@media(max-width:1100px){.saved-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.local-record-note{flex-direction:column;align-items:flex-start}}
+@media(max-width:540px){.saved-grid{grid-template-columns:1fr}.saved-info{padding:20px}.local-record-note{padding:24px}.local-record-note h2{font-size:22px}.backup-actions{flex-wrap:wrap}.saved-thumbnail{min-height:160px}}
+@media(max-width:1100px){.compose-workspace .object-controls{display:flex;flex-wrap:wrap;gap:7px}.compose-workspace .object-controls button{padding:8px 12px}#object-settings{min-height:0;margin:0}.compose-workspace .preview-panel>.button{width:auto}}
+@media(max-width:760px){.compose-workspace .workspace-toolbar{display:flex}.compose-workspace .motif-library{max-width:330px}.compose-workspace .category-tabs{max-width:330px}.compose-workspace .motif-library button{display:flex;align-items:center;gap:8px}.compose-workspace .motif-library canvas{width:48px}.compose-workspace .paper-options{border:0;margin:15px 0 0;padding:0;display:flex;align-items:center;gap:20px}.compose-workspace .paper-options h3,.compose-workspace .paper-options p{margin:0}.compose-workspace .tool-tip{padding-top:6px}.compose-workspace .preview-panel>.button{width:auto}}
+@media(max-width:1100px){#trace-workspace .preview-panel{align-items:flex-start}#trace-workspace [data-trace-state]{min-height:0;margin:0}#trace-workspace .trace-complete{margin-top:0}#trace-workspace .preview-panel>.button{width:auto}}
+@media(max-width:760px){#trace-workspace .workspace-toolbar{grid-template-columns:1fr 1fr}#trace-workspace .reference-choices{grid-column:1;grid-row:2;align-self:start}#trace-workspace #reference-panel{grid-column:2;grid-row:2/5}#trace-workspace .reference-image{max-width:180px;margin:auto}#trace-workspace .reference-toggle{grid-column:1;align-self:start;justify-self:start;margin:0}#trace-workspace .paper-options{grid-column:1;padding:0;border:0;margin:0}#trace-workspace .asset-note{grid-column:1/-1;padding:0;margin:0}.reference-description{font-size:10px}#trace-workspace .preview-panel>.button{width:auto}.compare-grid{gap:15px}}
+@media(max-width:540px){#trace-workspace .preview-panel>.button{width:100%}.compare-grid{gap:12px}.compare-grid figcaption{font-size:10px}#trace-compare{padding:30px 20px}}

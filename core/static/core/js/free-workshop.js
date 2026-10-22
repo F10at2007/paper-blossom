@@ -1,9 +1,10 @@
 import { CutHistory, PAPER_COLORS, traceCut, renderPaper } from './free-paper.js';
 import { createPaperDownloader } from './paper-download.js';
 import { FoldSession, FOLDS, clipFold, foldView, toFoldView, fromFoldView } from './fold-paper.js';
+import { attachPersistence } from './work-persistence.js';
 
 /** Owns one page's pointer lifecycle. Geometry and rendering live in free-paper. */
-function mountWorkshop(root) {
+export function mountWorkshop(root, extension = {}) {
   const paper = root.querySelector('#paper-canvas');
   const drawing = root.querySelector('#drawing-canvas');
   const preview = root.querySelector('#preview-canvas');
@@ -31,6 +32,7 @@ function mountWorkshop(root) {
     button('redo').disabled = !!stroke || !history.future.length;
     button('clear').disabled = !!stroke || !(history.paths.length || history.future.length);
     button('download').disabled = !!stroke || exporting || !!(fold && fold.state !== 'unfolded');
+    button('save').disabled = !!stroke || !!(fold && !fold.mode);
     if (fold) {
       button('unfold').disabled = !fold.mode || !!stroke;
     }
@@ -46,6 +48,7 @@ function mountWorkshop(root) {
     if (fold) updateFoldView();
     root.querySelector('#cut-count').textContent = `已剪 ${history.paths.length} 次 / 1 : 1`;
     updateButtons();
+    extension.onRebuild?.();
   }
 
   function renderFoldedPaper() {
@@ -165,6 +168,7 @@ function mountWorkshop(root) {
 
   on(drawing, 'pointerdown', event => {
     if (stroke || !event.isPrimary || event.button !== 0) return;
+    if (extension.canDraw?.() === false) return;
     if (fold && fold.state !== 'editing') return;
     event.preventDefault();
     if (!fold) drawing.focus({ preventScroll: true });
@@ -252,7 +256,8 @@ function mountWorkshop(root) {
     updateButtons();
     announce('正在生成 2048 × 2048 透明底 PNG…');
     try {
-      await downloader.download(finalPaths(),color,fold ? '一纸生花_折纸成花.png' : '一纸生花_自由剪纸.png',fold?.finalGroups);
+      const filename=root.dataset.mode==='trace'?'一纸生花_纹样临摹.png':fold?'一纸生花_折纸成花.png':'一纸生花_自由剪纸.png';
+      await downloader.download(finalPaths(),color,filename,fold?.finalGroups);
       announce('PNG 已生成并交给浏览器下载，请在下载列表中查看。');
     } catch (error) {
       announce(`下载失败：${error.message || '请检查浏览器下载设置后重试。'}`);
@@ -288,6 +293,16 @@ function mountWorkshop(root) {
     drawing.style.pointerEvents = 'none';
     for (const control of root.querySelectorAll('button:not([data-placeholder])')) control.disabled = true;
   }
+  const snapshot=()=>({mode:root.dataset.mode,color,paths:structuredClone(history.paths),...(fold?{foldMode:fold.mode,foldState:fold.state}:{}),...extension.snapshot?.()});
+  attachPersistence({root,snapshot,notify:announce,signal:listeners.signal,restore:data=>{
+    color=data.color;history.paths=structuredClone(data.paths);history.future=[];
+    if(fold){fold.mode=data.foldMode;fold.state=data.foldState;for(const item of root.querySelectorAll('[data-fold]'))item.setAttribute('aria-pressed',String(item.dataset.fold===fold.mode));root.querySelector('#fold-hint').textContent=fold.definition.hint;}
+    extension.restore?.(data);
+    for(const item of root.querySelectorAll('[data-color]'))item.setAttribute('aria-pressed',String(item.dataset.color===color));
+    root.querySelector('#paper-color-name').textContent=PAPER_COLORS.find(c=>c.value===color).name;
+    rebuild();
+  }});
+  return {snapshot,notify:announce,hasCuts:()=>history.paths.length>0,cancel:()=>endStroke(false),paper};
 }
 
 const root = document.querySelector('#free-workspace, #fold-workspace');

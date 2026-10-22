@@ -1,0 +1,10 @@
+<div class="panel-heading"><h2 id="tools-title">选择参考图</h2><span>原创练习</span></div>
+<div class="reference-choices" role="group" aria-label="临摹参考图">
+  <button type="button" data-reference="bloom" aria-pressed="true">初绽 <small>简单</small></button>
+  <button type="button" data-reference="leaves" aria-pressed="false">叶语 <small>中等</small></button>
+  <button type="button" data-reference="lattice" aria-pressed="false">花窗 <small>较复杂</small></button>
+</div>
+<button type="button" class="text-link reference-toggle" data-action="toggle-reference" aria-expanded="true">隐藏参考图</button>
+<div id="reference-panel"><div class="reference-image checkerboard"><canvas id="reference-canvas" width="400" height="400" aria-label="独立临摹参考图"></canvas></div><p id="reference-description" class="reference-description"></p></div>
+{% include 'core/components/paper_colors.html' %}
+<p class="asset-note">图案为本工坊原创。观察轮廓、纸桥与留白，剪出自己的节奏。</p>

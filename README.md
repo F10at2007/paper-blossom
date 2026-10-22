@@ -1,9 +1,12 @@
 # 一纸生花 · 数字剪纸工坊
 
-网页设计竞赛「匠心传成，非遗焕新」作品。已完成基础框架、自由剪艺，以及第三阶段折纸成花的几何折叠与透明 PNG 下载。
-沿用 Python 3.12 + Django 6.1.2，模板 + 自主 CSS + 原生 JavaScript，无新增依赖。
+网页设计竞赛「匠心传成，非遗焕新」作品。四种创作模式、透明 PNG 导出及本地作品管理现已实现。
 
-在项目目录打开 PowerShell，执行：
+沿用 **Python 3.12 + Django 6.1.2 + 原生 JavaScript / Canvas 2D + 自主 CSS**。没有 React/Vite 构建链，没有新增第三方绘图库或 UI 库。
+
+## 启动与检查
+
+当前项目已有 `.venv`，在项目目录打开 PowerShell：
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
@@ -12,70 +15,98 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-浏览器访问 http://127.0.0.1:8000/ 查看首页。已有 `.venv` 和依赖时可直接激活并启动。
+访问 http://127.0.0.1:8000/ 。已有依赖时可省略安装；数据库迁移沿用原项目，仅供既有 Django 配置使用，用户作品不写入数据库。
 
-| 页面 | 地址 | 当前范围 |
-| --- | --- | --- |
-| 首页 | `/` | 品牌主视觉、四种模式、文化介绍 |
-| 模式选择 | `/modes/` | 四种模式独立入口 |
-| 自由剪艺 | `/workshop/free/` | 真实自由剪裁、撤销重做、换色、预览、PNG 下载 |
-| 折纸成花 | `/workshop/fold/` | 对折（水平/垂直）、四折、八折、展开/返回剪裁、历史、换色、完整 PNG 下载 |
-| 其他工作台 | `/workshop/trace/`、`/workshop/compose/` | 共用布局，仅静态示意 |
-| 我的作品 | `/works/` | 空状态及明确标记的示例卡片 |
-
-```text
-config/                       原有 Django 配置
-core/
-  modes.py                    四模式名称、介绍、工具、纹样的唯一数据源
-  views.py / urls.py          只读页面渲染与导航
-  templates/core/
-    base.html                 共用页壳、页脚、占位提示弹窗
-    index.html                Home
-    modes.html                ModeSelection
-    workshop.html             Workshop（四模式共用）
-    works.html                MyWorks
-    components/               Navbar、ModeCard、WorkspaceToolbar
-  static/core/
-    css/site.css              原创样式与响应式布局
-    css/free-workshop.css     自由剪艺画布与控制状态
-    css/fold-workshop.css     折叠选择、步骤、参考线与响应式布局
-    js/app.js                 未开放功能的提示弹窗
-    js/free-paper.js          剪裁历史、透明渲染、PNG 编码
-    js/free-workshop.js       两个模式共用的指针、历史、预览与工具控制器
-    js/fold-paper.js          折叠会话、有效区域裁剪、镜像与旋转映射
-    js/paper-download.js      两个模式共用的 PNG 下载及 URL 清理
-    art/                      四份原创 SVG 剪纸示意
-  tests.py                    页面、模式入口与占位边界测试
-docs/phase-one.md             验收记录与后续边界
-docs/phase-two.md             自由剪艺实现与验收记录
-docs/phase-three.md           折叠几何、文件清单和验收边界
-tests/                       原生 Node 单元测试及 Chrome 浏览器验收脚本
-```
-
-管理后台地址为 http://127.0.0.1:8000/admin/，需要时执行
-`python manage.py createsuperuser` 创建管理员。
-
-检查项目：`python manage.py check`、`python manage.py test`。
-
-自由剪艺：用鼠标或单指画出轮廓，松手后自动连接首尾，**圈内的纸会被剪去**。棋盘格表示透明，不会出现在导出图片中。支持撤销、重做、清空确认和四种纸色，点击下载获得 2048×2048 透明 PNG。路径只保留在当前页面内，刷新或离开页面会丢失；本地作品保存仍未开放。
-
-折纸成花：选择垂直/水平对折、四折或八折，折叠纸片居中显示，不显示其他折叠区域。可以从绘图区内的纸外起笔，松手后仅剪去轮廓与纸片相交的部分。点击“展开作品”查看完整映射结果，“返回剪裁”继续编辑。切换折法需确认清除旧路径；“重新开始”恢复当前折法的完整纸张。剪裁中不显示实时成品预览，点击“展开作品”后才展示最终效果并启用 PNG 下载。返回剪裁后需再次展开才能下载。八折是方形纸张上的八个 45° 三角区域，不模拟物理折叠。
-
-可选开发检查（Node 22+，不需安装 npm 依赖）：
+全新机器请先安装 Python 3.12 或兼容版本，并运行 `python -m venv .venv` 创建环境。更新代码后，已打开的旧页面可按 Ctrl+F5 刷新脚本缓存。
 
 ```powershell
-node --test tests/free-paper.test.mjs tests/fold-paper.test.mjs
-node --check core/static/core/js/free-workshop.js
+python manage.py check
+python manage.py test
+python manage.py collectstatic --noinput
 ```
 
-完整浏览器验收方法见 `docs/phase-two.md` 和 `docs/phase-three.md`。Chrome 测试程序与截图仅存放在忽略的 `.qa/`，不属于网站依赖。更新代码后，已打开的旧页面建议按 Ctrl+F5 强制刷新，避免复用旧版 JavaScript 缓存。
+无需 npm 安装或前端编译；collectstatic 将静态资源收集到已忽略的 `staticfiles/`。当前设置用于本地比赛演示，公网部署需另行配置密钥、DEBUG、域名和服务器。
 
-本项目无 Node 前端构建链，无需 `npm install` 或 `npm run build`。模板和静态资源由 Django 开发服务器提供。
+## 四种模式
 
-现有依赖：Django（页面与静态资源）、asgiref（Django 的异步接口依赖）、sqlparse（Django SQL 工具依赖）、tzdata（Windows 时区数据），版本保持 `requirements.txt` 不变。
+| 页面 | 地址 | 操作 |
+| --- | --- | --- |
+| 工坊首页 | `/` | 品牌介绍、四模式入口与剪纸文化背景 |
+| 模式选择 | `/modes/` | 选择创作方式 |
+| 折纸成花 | `/workshop/fold/` | 水平/垂直对折、四折、八折；纸片居中，可从纸外起笔，展开后才显示完整作品并启用下载 |
+| 自由剪艺 | `/workshop/free/` | 画出轮廓，松手自动闭合，圈内真正镂空；撤销、重做、清空、换色、预览 |
+| 纹样临摹 | `/workshop/trace/` | 三幅分级原创参考图；参考显隐、独立对比、完成/继续；导出只含用户作品 |
+| 百纹成画 | `/workshop/compose/` | 花卉、动物、几何、边框共十二款原创纹样；添加、拖动、缩放、旋转、删除、取消选择、撤销重做与预览 |
+| 我的作品 | `/works/` | 缩略图、筛选、恢复编辑、重命名、下载、删除及本地备份 |
 
-视觉素材均在项目内以 SVG 几何路径原创绘制；纸感纹理由内联 SVG 噪声生成，字体使用系统宋体及微软雅黑等回退字体。未使用外部图片、字体、模板或 UI 库，无需额外素材授权。
+四模式均支持 **2048×2048 透明 PNG**。导出不包含网页、参考图、棋盘格、折痕或选择框。拼接模式将独立的镂空纸片叠放，超出方形画布的部分按画布边界裁去。
 
-占位范围：纹样临摹、百纹成画的玩法及操作、本地保存作品、继续编辑与删除。未实现 localStorage、自动保存或新增业务数据库逻辑。折纸成花与自由剪艺的剪裁、历史、纸色、预览与 PNG 下载已可使用。
+## 本地保存
 
-原项目的 SQLite 与管理后台保留，但本阶段页面不访问作品数据库、不新增账号功能。当前设置用于本地开发。
+- 点击“保存作品”并命名；已有作品再次保存会更新同一记录及修改时间。
+- 保存可编辑数据：自由剪裁路径，折叠基础路径/折法/视图，临摹参考 ID/用户路径/完成状态，拼接素材 ID/位置/大小/角度，以及纸色。
+- 从“我的作品”恢复正确模式，继续修改后手动保存。未保存修改在刷新或离开后会丢失；没有自动保存。
+- 记录仅保存在**当前浏览器、当前站点地址**的 localStorage；`localhost` 与 `127.0.0.1`、不同端口分别拥有独立记录。不会上传，不跨设备同步，清理浏览器数据会导致记录丢失。
+- 最多 30 幅作品，存储内容上限 150 万字符；缩略图仅 160×160，单项也有体积保护。写入失败会提示并保留旧记录。
+- 可“导出备份”下载包含编辑数据的 JSON。“导入备份”校验通过并确认后替换本地记录。导入是本地读取，不上传文件。PNG 只能保存最终图像，不能替代可编辑 JSON。
+- 数据损坏时保留原始记录供备份，不会静默清空；仍可返回工坊创作、下载 PNG，或导入有效备份。
+
+## 结构与复用
+
+```text
+core/
+  modes.py                         四模式介绍与入口元数据
+  templates/core/                   首页、模式页、共用工作台、作品页
+    components/                    导航、模式卡片、工具、共用画布、参考图与对比
+  static/core/
+    css/                           原创纸感样式、响应式及模式样式
+    js/free-paper.js               剪裁历史、透明渲染、PNG 编码
+    js/free-workshop.js            自由/折纸/临摹共用绘制控制器
+    js/fold-paper.js               折叠裁剪、显示逆变换和几何展开
+    js/patterns.js                 三份原创参考图、十二款原创纸片
+    js/trace-workshop.js           临摹选择、对比与完成流程
+    js/composition-model.js        独立纸片渲染与操作历史
+    js/compose-workshop.js         拼接操作控制器
+    js/work-store.js               版本、几何、容量校验及本地记录 CRUD
+    js/work-document.js            四模式保存数据的统一最终渲染
+    js/work-persistence.js         共用手动保存和恢复
+    js/my-works.js                 真实作品列表、下载、备份及导入
+    js/paper-download.js           四模式共用 PNG 下载与 Blob URL 清理
+    art/                           首页原创 SVG 示意图
+  tests.py                         页面与集成边界检查
+tests/                             原生 Node 及 Chrome CDP 验收脚本
+docs/                              各阶段交付记录与最终验收报告
+```
+
+## 依赖与素材
+
+| 依赖 | 用途 |
+| --- | --- |
+| Django 6.1.2 | 既有 URL、模板与静态资源服务 |
+| asgiref 3.12.1 | Django 的 ASGI 依赖 |
+| sqlparse 0.6.0 | Django SQL 解析依赖，游戏不新增数据库逻辑 |
+| tzdata 2026.5 | Windows 时区数据 |
+
+版本保持 `requirements.txt` 不变。Node 22+ 与 Chrome for Testing 仅用于可选开发验收，不是网站运行依赖。没有外部图片、字体下载、视频或远程绘图库。
+
+SVG、参考图和拼接纸片均为本项目原创几何素材，名称为练习名称，不编造传统纹样寓意。文化背景的入选年份与一般介绍依据 [UNESCO 中国剪纸项目页](https://ich.unesco.org/en/RL/chinese-paper-cut-00219)；未使用该网站的图片、视频或纹样。
+
+## 复现验收
+
+```powershell
+node --test tests/free-paper.test.mjs tests/fold-paper.test.mjs tests/work-store.test.mjs
+```
+
+浏览器验收需要先启动 Django，并启动独立的 Chrome 129 测试配置（9222 端口），随后**顺序**执行：
+
+```powershell
+node tests/browser-phase-four.mjs
+node tests/browser-fold-cut.mjs
+node tests/browser-free-cut.mjs
+```
+
+脚本基于 Node 内置 WebSocket 和 Chrome DevTools Protocol，无 npm 依赖。不要对日常浏览器配置运行验收。第四阶段脚本仅在隔离测试浏览器中写入验收作品，并在结束时恢复测试前的作品记录。截图、下载与报告位于忽略目录 `.qa/`，不会随源码提交。
+
+最终功能、文件清单和验证边界见 [第四阶段交付与验收](docs/phase-four.md)。第一至第三阶段文档保留历史记录，其旧的占位范围以本 README 和第四阶段文档为准。
+
+尚未进行实体触屏手工验证或大量路径压力测试。没有 AI 评分、账号、云端同步、复杂解锁或高级图层系统。

@@ -1,0 +1,24 @@
+<div class="workspace free-workspace compose-workspace" id="compose-workspace" data-mode="compose">
+  <aside class="workspace-toolbar" aria-labelledby="motif-title">
+    <div class="panel-heading"><h2 id="motif-title">纹样素材</h2><span>12 款原创</span></div>
+    <div class="category-tabs" role="group" aria-label="纹样分类"><button data-category="花卉" aria-pressed="true">花卉</button><button data-category="动物" aria-pressed="false">动物</button><button data-category="几何" aria-pressed="false">几何</button><button data-category="边框" aria-pressed="false">边框</button></div>
+    <div id="motif-library" class="motif-library" aria-label="点击添加纹样"></div>
+    {% include 'core/components/paper_colors.html' %}
+    <div class="tool-tip"><span>小小纹样，自有天地。</span><p>点击素材添加。选中后拖动，用右侧按钮缩放、旋转。点击空白或按 Escape 取消选择。</p></div>
+  </aside>
+  <div class="canvas-panel">
+    <div class="canvas-top"><span data-work-name>未命名作品 · 未保存</span><div class="history-actions"><button data-action="undo" aria-label="撤销" disabled>↶</button><button data-action="redo" aria-label="重做" disabled>↷</button><span></span><button data-action="clear" disabled>清空</button></div></div>
+    <div class="canvas-area"><div class="paper-sheet cut-paper checkerboard"><canvas id="paper-canvas" width="1024" height="1024" aria-label="拼接作品"></canvas><canvas id="drawing-canvas" width="1024" height="1024" aria-label="拼接编辑区：点击选择、拖动纹样"></canvas></div><p>花鸟相逢，纸上成章<span>先选纹样，再把它放到心仪的位置</span></p></div>
+    <div class="canvas-bottom"><span id="object-count">0 / 80 个元素</span><span>透明 PNG · 2048 × 2048</span></div>
+  </div>
+  <aside class="preview-panel">
+    <div class="panel-heading"><h2>元素操作</h2><span id="selected-name">未选中</span></div>
+    <div class="object-controls"><button data-action="smaller" disabled>缩小 −</button><button data-action="larger" disabled>放大 ＋</button><button data-action="rotate-left" disabled>左转 ↶</button><button data-action="rotate-right" disabled>右转 ↷</button><button data-action="duplicate" disabled>复制</button><button data-action="delete" disabled>删除选中</button><button data-action="deselect" disabled>取消选择</button></div>
+    <p id="object-settings" class="placeholder-note">添加后，点击纸片选择元素。</p>
+    <button class="button secondary full" data-action="preview">完成并预览 <span>⤢</span></button>
+    <div class="preview-actions"><button class="button secondary full" data-action="save">保存作品 <span>＋</span></button><button class="button primary full" data-action="download" disabled>下载作品 <span>↓</span></button></div>
+    <p class="placeholder-note">画布外的部分会被裁去。下载不包含选框。保存后可在“我的作品”恢复。</p>
+    <p id="workshop-status" class="workshop-status" role="status" aria-live="polite">点击一个纹样，开始你的纸上构图。</p>
+  </aside>
+</div>
+<dialog id="compose-preview" aria-labelledby="compose-preview-title"><form method="dialog"><button class="dialog-close" aria-label="关闭预览">×</button></form><p class="eyebrow">COMPOSE / 百纹成画</p><h2 id="compose-preview-title">你的纸上构图</h2><div class="large-preview checkerboard"><canvas id="compose-preview-canvas" width="1024" height="1024" aria-label="无选框作品预览"></canvas></div><form method="dialog"><button class="button secondary">返回编辑 <span>←</span></button></form></dialog>
