@@ -98,6 +98,7 @@ async function download(name) {
 let browser;
 try {
   await call('Page.enable'); await call('Runtime.enable'); await call('Log.enable');
+  await call('Network.enable'); await call('Network.setCacheDisabled', {cacheDisabled:true});
   browser = await call('Browser.getVersion');
   await call('Browser.setDownloadBehavior', { behavior:'allowAndName',downloadPath:path.join(output,'downloads'),eventsEnabled:true });
   await call('Emulation.setDeviceMetricsOverride', {width:1440,height:1080,deviceScaleFactor:1,mobile:false});
@@ -233,7 +234,7 @@ try {
     for (const route of ['/','/modes/','/works/','/workshop/fold/','/workshop/free/','/workshop/trace/','/workshop/compose/']) {
       await navigate(route);
       await check(`navigation/assets/layout ${width} ${route}`, `(async()=>{if(document.documentElement.scrollWidth>innerWidth)return false;if([...document.images].some(i=>!i.complete||!i.naturalWidth))return false;for(const url of new Set([...document.querySelectorAll('a[href]')].map(a=>a.getAttribute('href')).filter(h=>h.startsWith('/')))){if(!(await fetch(url)).ok)return false}return true})()`);
-      if (['fold','trace','compose'].some(mode=>route.includes('/'+mode+'/'))) await check(`other mode remains placeholder ${width} ${route}`, `!document.querySelector('#drawing-canvas') && !!document.querySelector('[data-placeholder="下载 PNG"]')`);
+      if (['trace','compose'].some(mode=>route.includes('/'+mode+'/'))) await check(`other mode remains placeholder ${width} ${route}`, `!document.querySelector('#drawing-canvas') && !!document.querySelector('[data-placeholder="下载 PNG"]')`);
     }
   }
   assert.deepEqual(errors,[],'Browser console/runtime errors');

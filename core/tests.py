@@ -20,7 +20,7 @@ class WorkshopPagesTests(TestCase):
                 self.assertContains(self.client.get(reverse('core:modes')), url)
                 response = self.client.get(url)
                 self.assertContains(response, mode['name'])
-                if mode['slug'] == 'free':
+                if mode['slug'] in ('free', 'fold'):
                     self.assertContains(response, 'id="drawing-canvas"')
                     self.assertContains(response, 'data-action="download"')
                     self.assertContains(response, 'js/free-workshop.js')

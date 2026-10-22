@@ -45,8 +45,8 @@ export class CutHistory {
   }
 }
 
-export function traceCut(ctx, points, width, height) {
-  ctx.beginPath();
+export function traceCut(ctx, points, width, height, begin = true) {
+  if (begin) ctx.beginPath();
   points.forEach((p, i) => {
     if (i === 0) ctx.moveTo(p.x * width, p.y * height);
     else ctx.lineTo(p.x * width, p.y * height);
@@ -55,7 +55,7 @@ export function traceCut(ctx, points, width, height) {
 }
 
 /** Always rebuild from solid paper. Never composite against a previous result. */
-export function renderPaper(canvas, paths, color) {
+export function renderPaper(canvas, paths, color, groups = null) {
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('当前浏览器无法使用 Canvas 2D，请更换浏览器后重试。');
   ctx.save();
@@ -67,8 +67,12 @@ export function renderPaper(canvas, paths, color) {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.globalCompositeOperation = 'destination-out';
   ctx.fillStyle = '#000';
-  for (const points of paths) {
-    traceCut(ctx, points, canvas.width, canvas.height);
+  // Reflected copies of ONE base cut occupy disjoint fold domains. Fill them
+  // together so shared fold edges are resolved geometrically before rasterizing,
+  // avoiding semi-transparent seams from separately erased adjacent polygons.
+  for (const group of groups || paths.map(points => [points])) {
+    ctx.beginPath();
+    for (const points of group) traceCut(ctx, points, canvas.width, canvas.height, false);
     ctx.fill('evenodd');
   }
   ctx.restore();

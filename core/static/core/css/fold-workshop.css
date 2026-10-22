@@ -1,0 +1,30 @@
+html {scrollbar-gutter:stable}
+.fold-workspace .cut-paper {background:transparent;box-shadow:none}
+.fold-paper-background {position:absolute;inset:0;pointer-events:none}
+.fold-workspace #paper-canvas {position:relative}
+.fold-result-note {font-family:var(--serif);font-size:15px;line-height:2;color:var(--muted);margin:18px 0 28px}
+.fold-progress {display:flex;gap:24px;margin:0 0 20px;font-size:11px;color:var(--muted);flex-wrap:wrap}
+.fold-progress span {padding:6px 0;border-bottom:2px solid transparent}
+.fold-progress [aria-current="step"] {color:var(--red);border-color:var(--red)}
+.fold-progress b {font-weight:400;margin-right:6px;font-size:10px}
+.fold-choices {display:grid;gap:8px}
+.fold-choices button {display:flex;align-items:center;gap:13px;border:1px solid var(--line);background:var(--paper);padding:10px;text-align:left;font-size:12px}
+.fold-choices button small {display:block;color:var(--muted);font-size:9px;margin-top:2px}
+.fold-choices button[aria-pressed="true"] {border-color:var(--red);color:var(--red);background:#f4e9df}
+.fold-choices button:hover {border-color:var(--red)}
+.fold-icon {width:30px;height:30px;flex-shrink:0;display:block;border:1px solid #ab9382;background:linear-gradient(to right,var(--red) 50%,#ddd5c8 50%)}
+.fold-icon.horizontal {background:linear-gradient(to bottom,var(--red) 50%,#ddd5c8 50%)}
+.fold-icon.quarter {background:conic-gradient(from 270deg,var(--red) 0 90deg,#ddd5c8 90deg)}
+.fold-icon.eighth {background:conic-gradient(from 315deg,var(--red) 0 45deg,#ddd5c8 45deg)}
+#fold-guides {position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.fold-workspace[data-state="choose"] #drawing-canvas,.fold-workspace[data-state="unfolded"] #drawing-canvas {pointer-events:none;cursor:default}
+.fold-workspace[data-state="unfolded"] #fold-guides {display:none}
+.fold-workspace .workshop-status {height:104px}
+.fold-workspace .canvas-bottom {flex-wrap:wrap}
+.fold-toggle {margin-bottom:10px}
+.fold-workspace[data-state="unfolded"] #paper-canvas {animation:paper-open .24s ease-out}
+@keyframes paper-open {from{opacity:.45}to{opacity:1}}
+@media(max-width:1100px){.fold-workspace .workshop-status{height:64px}}
+@media(max-width:760px){.fold-workspace .workspace-toolbar{grid-template-columns:1fr}.fold-choices{grid-template-columns:repeat(4,minmax(0,1fr))}.fold-choices button{flex-direction:column;align-items:center;text-align:center;gap:6px}.fold-workspace .paper-options{border:0;border-top:1px solid var(--line);padding:15px 0 0;display:flex;gap:20px;align-items:center;margin:0}.fold-workspace .paper-options h3,.fold-workspace .paper-options p{margin:0}.fold-workspace .tool-tip{align-items:flex-start}.fold-workspace .tool-tip p{font-size:10px}.fold-workspace .preview-actions{margin-left:auto}}
+@media(max-width:540px){.fold-progress{gap:14px;font-size:10px}.fold-choices{gap:6px}.fold-choices button{padding:8px 2px;font-size:11px}.fold-choices button small{font-size:8px}.fold-icon{width:26px;height:26px}.fold-workspace .paper-options{gap:14px}.fold-workspace .preview-actions{width:100%}}
+@media(prefers-reduced-motion:reduce){.fold-workspace[data-state="unfolded"] #paper-canvas{animation:none}}
