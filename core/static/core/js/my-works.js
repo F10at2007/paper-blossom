@@ -1,4 +1,4 @@
-import { readWorks,deleteWork,saveWork,STORAGE_KEY,MODE_NAMES,MAX_STORAGE_CHARACTERS } from './work-store.js';
+import { readWorks,deleteWork,saveWork,STORAGE_KEY,MODE_NAMES,MAX_STORAGE_CHARACTERS,workVersion } from './work-store.js';
 import { renderDocument } from './work-document.js';
 import { createPaperDownloader } from './paper-download.js';
 
@@ -38,7 +38,7 @@ if(root){
                 deleteWork(current.id);render();notify('作品已删除。');
               }else{
                 const answer=window.prompt('新的作品名称（1–50 字）：',current.name);if(answer===null)return;
-                saveWork({id:current.id,name:answer,document:current.document,thumbnail:current.thumbnail});render();notify('名称已更新。');
+                saveWork({id:current.id,name:answer,document:current.document,thumbnail:current.thumbnail,expectedVersion:workVersion(current)});render();notify('名称已更新。');
               }
             }catch(error){notify(error.message);}finally{button.disabled=false;}
           });actions.append(button);

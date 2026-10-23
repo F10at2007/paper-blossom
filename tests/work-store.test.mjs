@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readWorks,saveWork,deleteWork,validateDocument,STORAGE_KEY,MAX_STORAGE_CHARACTERS } from '../core/static/core/js/work-store.js';
+import { readWorks,saveWork,deleteWork,validateDocument,STORAGE_KEY,MAX_STORAGE_CHARACTERS,workVersion } from '../core/static/core/js/work-store.js';
 import { MOTIFS,CATEGORIES,REFERENCES } from '../core/static/core/js/patterns.js';
 import { CompositionHistory,containsObject } from '../core/static/core/js/composition-model.js';
 const thumb='data:image/png;base64,iVBORw0KGgo=';
@@ -47,5 +47,25 @@ test('composition operation history preserves individual positions, branching, c
   history.undo();assert.equal(history.objects[0].x,.5);history.redo();assert.equal(history.objects[0].x,.7);
   history.clear();assert.equal(history.objects.length,0);history.undo();assert.equal(history.objects[0].x,.7);
   history.undo();history.commit([{...a,rotation:30}]);assert.equal(history.future.length,0);
-  assert.equal(containsObject({x:.5,y:.5},a),true);assert.equal(containsObject({x:.01,y:.01},a),false);
+  assert.equal(containsObject({x:.5,y:.5},a),false);assert.equal(containsObject({x:.01,y:.01},a),false);
+});
+
+
+test('stale edits cannot replace a newer saved record, but can be saved as a copy',()=>{
+  const storage=memory(),initial=saveWork({name:'original',document:documents[0],thumbnail:thumb},storage);
+  const version=workVersion(initial);
+  const newer=saveWork({...initial,document:{...initial.document,color:'#292923'},expectedVersion:version},storage);
+  assert.throws(()=>saveWork({...initial,name:'stale',expectedVersion:version},storage),/其他页面修改/);
+  assert.deepEqual(readWorks(storage),[newer]);
+  const copy=saveWork({...initial,id:null,name:'copy'},storage);
+  assert.notEqual(copy.id,initial.id);assert.equal(readWorks(storage).length,2);
+  deleteWork(initial.id,storage);
+  assert.throws(()=>saveWork({...initial,expectedVersion:version},storage),/另存副本/);
+});
+test('pierced hit testing passes through holes and unchanged transforms do not consume undo',()=>{
+  const ring={id:'r',motif:'circle',x:.5,y:.5,size:1,rotation:0};
+  assert.equal(containsObject({x:.5,y:.5},ring),false);
+  assert.equal(containsObject({x:.83,y:.5},ring),true);
+  const model=new CompositionHistory();model.commit([ring]);model.commit([ring]);assert.equal(model.past.length,1);
+  model.undo();assert.equal(model.objects.length,0);
 });

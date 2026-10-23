@@ -29,6 +29,7 @@ socket.addEventListener('message', event => {
   if (m.method === 'Log.entryAdded' && m.params.entry.level === 'error') errors.push(m.params.entry);
   if (m.method === 'Browser.downloadWillBegin') downloads.push(m.params);
   if (m.method === 'Browser.downloadProgress' && m.params.state === 'completed') completedDownloads.add(m.params.guid);
+  if (m.method === 'Page.javascriptDialogOpening' && m.params.type === 'beforeunload') { call('Page.handleJavaScriptDialog',{accept:true}); return; }
   if (m.method === 'Page.javascriptDialogOpening') dialogs.push(m.params);
 });
 function call(method, params = {}) {
@@ -97,7 +98,7 @@ async function download(name) {
 
 let browser;
 try {
-  await call('Page.enable'); await call('Runtime.enable'); await call('Log.enable');
+  await call('Page.enable'); await call('Runtime.enable'); await call('Log.clear');await call('Log.enable');
   await call('Network.enable'); await call('Network.setCacheDisabled', {cacheDisabled:true});
   browser = await call('Browser.getVersion');
   await call('Browser.setDownloadBehavior', { behavior:'allowAndName',downloadPath:path.join(output,'downloads'),eventsEnabled:true });

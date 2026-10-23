@@ -38,11 +38,14 @@ export function readWorks(storage=localStorage) {
   return data.works;
 }
 
-export function saveWork({id,name,document,thumbnail},storage=localStorage) {
+export const workVersion = work => JSON.stringify(work);
+
+export function saveWork({id,name,document,thumbnail,expectedVersion},storage=localStorage) {
   validateDocument(document);
   name=name.trim();if(!name||name.length>50)throw new Error('作品名称请填写 1–50 个字符。');
   const works=readWorks(storage),existing=id?works.find(w=>w.id===id):null;
-  if(id&&!existing)throw new Error('该作品已被删除，请刷新后另存为新作品。');
+  if(id&&!existing)throw new Error('该作品已被删除。当前画布仍保留，请点击另存副本。');
+  if(existing&&expectedVersion!==undefined&&workVersion(existing)!==expectedVersion)throw new Error('该作品已在其他页面修改。为避免覆盖，请将当前画布另存副本。');
   if(!existing&&works.length>=30)throw new Error('本地最多保存 30 幅作品，请先备份或删除部分作品。');
   const now=new Date().toISOString();
   const work={id:existing?.id||crypto.randomUUID(),name,document:structuredClone(document),thumbnail,createdAt:existing?.createdAt||now,updatedAt:now};

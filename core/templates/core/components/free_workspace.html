@@ -16,6 +16,7 @@
         {% if mode.slug == 'fold' %}<div class="fold-paper-background checkerboard" aria-hidden="true" hidden></div>{% endif %}
         <canvas id="paper-canvas" width="1024" height="1024" aria-label="当前剪纸作品"></canvas>
         {% if mode.slug == 'fold' %}<canvas id="fold-guides" width="1024" height="1024" aria-hidden="true"></canvas>{% endif %}
+        {% if mode.slug == 'trace' %}<canvas id="trace-guide" width="1024" height="1024" aria-hidden="true"></canvas>{% endif %}
         <canvas id="drawing-canvas" width="1024" height="1024" aria-label="剪纸画布：按下并拖动，松开后自动闭合，圈内区域将被剪去" aria-describedby="cut-instruction" tabindex="0">浏览器需支持 Canvas 2D。</canvas>
       </div>
       <p id="cut-instruction">{% if mode.slug == 'fold' %}<strong id="fold-caption">先选折法，再落下第一剪</strong>{% else %}画出轮廓，剪去圈内的纸{% endif %}<span>松手自动闭合 · 棋盘格表示透明镂空</span></p>

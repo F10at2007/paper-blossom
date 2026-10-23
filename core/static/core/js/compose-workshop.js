@@ -21,8 +21,11 @@ if(root){
       root.querySelector('#object-settings').textContent=`大小 ${Math.round(object.size*100)}% · 旋转 ${object.rotation}°`;
     }else{selected=null;root.querySelector('#selected-name').textContent='未选中';root.querySelector('#object-settings').textContent='点击纸片选择，点击空白取消选择。';}
     for(const action of ['smaller','larger','rotate-left','rotate-right','duplicate','delete','deselect'])button(action).disabled=!object||!!drag;
+    button('smaller').disabled=!object||!!drag||object.size<=.08;
+    button('larger').disabled=!object||!!drag||object.size>=.8;
     button('undo').disabled=!!drag||!model.past.length;button('redo').disabled=!!drag||!model.future.length;button('clear').disabled=!!drag||!model.objects.length;
     button('download').disabled=!!drag||exporting||!model.objects.length;button('save').disabled=!!drag;button('preview').disabled=!!drag||!model.objects.length;
+    if(!drag)root.dispatchEvent(new Event('workchange'));
     root.querySelector('#object-count').textContent=`${model.objects.length} / 80 个元素`;
   }
   const point=e=>{const r=input.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height};};

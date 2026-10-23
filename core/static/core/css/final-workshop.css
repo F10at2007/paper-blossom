@@ -58,3 +58,23 @@ button:disabled {cursor:not-allowed}
 @media(max-width:1100px){#trace-workspace .preview-panel{align-items:flex-start}#trace-workspace [data-trace-state]{min-height:0;margin:0}#trace-workspace .trace-complete{margin-top:0}#trace-workspace .preview-panel>.button{width:auto}}
 @media(max-width:760px){#trace-workspace .workspace-toolbar{grid-template-columns:1fr 1fr}#trace-workspace .reference-choices{grid-column:1;grid-row:2;align-self:start}#trace-workspace #reference-panel{grid-column:2;grid-row:2/5}#trace-workspace .reference-image{max-width:180px;margin:auto}#trace-workspace .reference-toggle{grid-column:1;align-self:start;justify-self:start;margin:0}#trace-workspace .paper-options{grid-column:1;padding:0;border:0;margin:0}#trace-workspace .asset-note{grid-column:1/-1;padding:0;margin:0}.reference-description{font-size:10px}#trace-workspace .preview-panel>.button{width:auto}.compare-grid{gap:15px}}
 @media(max-width:540px){#trace-workspace .preview-panel>.button{width:100%}.compare-grid{gap:12px}.compare-grid figcaption{font-size:10px}#trace-compare{padding:30px 20px}}
+
+/* Editing helpers keep the paper palette and stay outside export canvases. */
+#trace-guide {position:absolute;inset:0;pointer-events:none}
+.guide-toggle {font-size:12px;padding:10px 0;min-height:40px}
+.workshop-quickbar {display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin:18px 0}
+.workshop-quickbar .button {font-size:12px;padding:10px 18px}
+.workshop-quickbar>span {font-size:11px;color:var(--muted)}
+.workspace[data-dirty="true"] [data-work-name] {color:var(--red)}
+.preview-actions {display:flex;flex-direction:column;gap:10px}
+.preview-actions .button {width:100%}
+.workspace.is-focused {grid-template-columns:minmax(0,1fr) 230px}
+.workspace.is-focused .workspace-toolbar {display:none}
+.workspace.is-focused .preview-panel {display:block;grid-column:auto;border-top:0;border-left:1px solid var(--line)}
+.workspace.is-focused .paper-sheet {max-width:min(72vh,800px);width:90%}
+.workspace.is-focused .canvas-area {min-height:560px;padding:24px}
+.workspace.is-focused .preview-actions {margin-top:20px}
+.workspace.is-focused .workshop-status {height:104px}
+.workspace.is-focused .preview-art {width:100%}
+@media(max-width:1100px){.preview-actions{flex-direction:row;flex-wrap:wrap}.preview-actions .button{width:auto}.workspace.is-focused .preview-actions{flex-direction:column}.workspace.is-focused .preview-actions .button{width:100%}}
+@media(max-width:760px){.workspace.is-focused{grid-template-columns:1fr}.workspace.is-focused .preview-panel{grid-column:1/-1;border-left:0;border-top:1px solid var(--line)}.workspace.is-focused .canvas-area{min-height:350px;padding:18px 8px}.workspace.is-focused .paper-sheet{width:100%}.workspace.is-focused .preview-art{width:86px}.workspace.is-focused .preview-panel{display:flex}.workspace.is-focused .preview-actions{flex-direction:row;margin-top:0}.workspace.is-focused .preview-actions .button{width:auto}.guide-toggle{grid-column:1/-1}.preview-actions{width:100%;margin-left:0}.preview-actions .button{flex:1;white-space:nowrap}.workshop-quickbar>span{font-size:10px}}

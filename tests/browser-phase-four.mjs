@@ -29,6 +29,7 @@ socket.addEventListener('message', event => {
   if (m.method === 'Log.entryAdded' && m.params.entry.level === 'error') errors.push(m.params.entry);
   if (m.method === 'Browser.downloadWillBegin') downloads.push(m.params);
   if (m.method === 'Browser.downloadProgress' && m.params.state === 'completed') completedDownloads.add(m.params.guid);
+  if (m.method === 'Page.javascriptDialogOpening' && m.params.type === 'beforeunload') { call('Page.handleJavaScriptDialog',{accept:true}); return; }
   if (m.method === 'Page.javascriptDialogOpening') dialogs.push(m.params);
 });
 function call(method, params = {}) {
@@ -107,7 +108,7 @@ async function saveNamed(name){
 }
 
 try {
-  await call('Page.enable');await call('Runtime.enable');await call('Log.enable');await call('Network.enable');await call('Network.setCacheDisabled',{cacheDisabled:true});
+  await call('Page.enable');await call('Runtime.enable');await call('Log.clear');await call('Log.enable');await call('Network.enable');await call('Network.setCacheDisabled',{cacheDisabled:true});
   browser=await call('Browser.getVersion');
   await call('Browser.setDownloadBehavior',{behavior:'allowAndName',downloadPath:path.join(output,'downloads'),eventsEnabled:true});
   await call('Emulation.setDeviceMetricsOverride',{width:1440,height:1080,deviceScaleFactor:1,mobile:false});
@@ -194,8 +195,8 @@ try {
   await call('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:1});await delay(70);
   const touchRect=await rect(),scrollBefore=await evaluate('scrollY');
   const tp=(x,y)=>({x:touchRect.x+x*touchRect.width,y:touchRect.y+y*touchRect.height,id:8,radiusX:2,radiusY:2,force:1});
-  await call('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[tp(.65,.35)]});
-  await call('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[tp(.75,.45)]});
+  await call('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[tp(.75,.35)]});
+  await call('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[tp(.85,.45)]});
   await call('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await delay(50);
   await saveNamed('拼接练习');
   await check('composition touch drag updates coordinates without page scroll',`(()=>{const o=JSON.parse(localStorage.getItem('${key}')).works.find(w=>w.id==='${ids.compose}').document.objects[0];return o.x>.7&&o.y>.4&&scrollY===${scrollBefore}})()`);

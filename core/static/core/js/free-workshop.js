@@ -49,6 +49,7 @@ export function mountWorkshop(root, extension = {}) {
     root.querySelector('#cut-count').textContent = `已剪 ${history.paths.length} 次 / 1 : 1`;
     updateButtons();
     extension.onRebuild?.();
+    root.dispatchEvent(new Event('workchange'));
   }
 
   function renderFoldedPaper() {
@@ -208,6 +209,7 @@ export function mountWorkshop(root, extension = {}) {
   on(button('clear'), 'click', () => {
     if (!window.confirm('清空全部剪裁并恢复完整纸张？此操作会同时清除撤销与重做记录。')) return;
     history.clear();
+    extension.onClear?.();
     if (fold) fold.state='editing';
     rebuild();
     announce('已恢复完整纸张，可以重新开始创作。');
@@ -294,7 +296,7 @@ export function mountWorkshop(root, extension = {}) {
     for (const control of root.querySelectorAll('button:not([data-placeholder])')) control.disabled = true;
   }
   const snapshot=()=>({mode:root.dataset.mode,color,paths:structuredClone(history.paths),...(fold?{foldMode:fold.mode,foldState:fold.state}:{}),...extension.snapshot?.()});
-  attachPersistence({root,snapshot,notify:announce,signal:listeners.signal,restore:data=>{
+  const persistence=attachPersistence({root,snapshot,notify:announce,signal:listeners.signal,restore:data=>{
     color=data.color;history.paths=structuredClone(data.paths);history.future=[];
     if(fold){fold.mode=data.foldMode;fold.state=data.foldState;for(const item of root.querySelectorAll('[data-fold]'))item.setAttribute('aria-pressed',String(item.dataset.fold===fold.mode));root.querySelector('#fold-hint').textContent=fold.definition.hint;}
     extension.restore?.(data);
@@ -302,7 +304,7 @@ export function mountWorkshop(root, extension = {}) {
     root.querySelector('#paper-color-name').textContent=PAPER_COLORS.find(c=>c.value===color).name;
     rebuild();
   }});
-  return {snapshot,notify:announce,hasCuts:()=>history.paths.length>0,cancel:()=>endStroke(false),paper};
+  return {snapshot,notify:announce,hasCuts:()=>history.paths.length>0,cancel:()=>endStroke(false),allowNavigation:persistence.allowNavigation,paper};
 }
 
 const root = document.querySelector('#free-workspace, #fold-workspace');
