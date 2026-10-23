@@ -137,3 +137,9 @@ node tests/browser-free-cut.mjs
 折后纸片居中，可从纸外起笔；只有点击展开才显示完整效果并启用下载。撤销、重做、换色、保存恢复及 2048 × 2048 透明 PNG 沿用既有流程。五折未实现。
 
 验收：`node --test tests/*.test.mjs`；启动独立 Chrome 129 后运行 `node tests/browser-radial-cut.mjs`（可通过 `BASE_URL` 指定测试服务器，默认 8000）。实现与实际测试边界见 [团花扩展验收](docs/radial-folds.md)。
+
+## 拼接恢复测试的渲染条件
+
+四模式回归已将保存恢复验证分为结构化数据、固定条件的零容差位图比较、默认渲染下的交互与导出三层。测试不会修改业务保存格式或业务渲染器；不再将不同 Canvas 后端的抗锯齿差异误判为数据恢复错误。
+
+运行 `node tests/browser-phase-four.mjs`；测试服务器不是 8000 时，可先设置 `$env:BASE_URL='http://127.0.0.1:8001'`。报告会记录运行成功/失败、分层结果及失败原因。详情见 [位图恢复测试验收](docs/composition-rendering-tests.md)。
