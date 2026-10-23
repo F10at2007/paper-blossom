@@ -1,6 +1,7 @@
 import { CutHistory, PAPER_COLORS, traceCut, renderPaper } from './free-paper.js';
 import { createPaperDownloader } from './paper-download.js';
 import { FoldSession, FOLDS, clipFold, foldView, toFoldView, fromFoldView } from './fold-paper.js';
+import { renderFoldPaper } from './fold-render.js';
 import { attachPersistence } from './work-persistence.js';
 
 /** Owns one page's pointer lifecycle. Geometry and rendering live in free-paper. */
@@ -32,19 +33,20 @@ export function mountWorkshop(root, extension = {}) {
     button('redo').disabled = !!stroke || !history.future.length;
     button('clear').disabled = !!stroke || !(history.paths.length || history.future.length);
     button('download').disabled = !!stroke || exporting || !!(fold && fold.state !== 'unfolded');
+    if(button('preview'))button('preview').disabled=!!stroke || !!(fold && fold.state!=='unfolded');
     button('save').disabled = !!stroke || !!(fold && !fold.mode);
     if (fold) {
       button('unfold').disabled = !fold.mode || !!stroke;
     }
   }
 
+  const renderFinal = canvas => fold ? renderFoldPaper(canvas,fold,color) : renderPaper(canvas,history.paths,color);
+
   function rebuild() {
-    const groups = fold?.state === 'unfolded' ? fold.finalGroups : null;
-    const paths = groups ? groups.flat() : history.paths;
     if (fold && fold.state !== 'unfolded') renderFoldedPaper();
-    else renderPaper(paper,paths,color,groups);
-    if (preview) renderPaper(preview, paths, color, groups);
-    if (previewDialog?.open) renderPaper(largePreview, paths, color, groups);
+    else renderFinal(paper);
+    if (preview && (!fold || fold.state==='unfolded')) renderFinal(preview);
+    if (previewDialog?.open) renderFinal(largePreview);
     if (fold) updateFoldView();
     root.querySelector('#cut-count').textContent = `已剪 ${history.paths.length} 次 / 1 : 1`;
     updateButtons();
@@ -78,7 +80,7 @@ export function mountWorkshop(root, extension = {}) {
     root.querySelector('#fold-caption').textContent = unfolded ? '纸已展开，对称由你而生' : fold.mode ? '纸片居中 · 可从纸外起笔' : '先选折法，再落下第一剪';
     const background=root.querySelector('.fold-paper-background');
     background.hidden=!fold.mode;
-    const region=unfolded ? [{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}] : fold.definition?.region.map(p=>toFoldView(p,fold.mode));
+    const region=unfolded ? (fold.definition.sheet || [{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}]) : fold.definition?.region.map(p=>toFoldView(p,fold.mode));
     if(region) background.style.clipPath=`polygon(${region.map(p=>`${p.x*100}% ${p.y*100}%`).join(',')})`;
     drawFoldGuides();
   }
@@ -101,6 +103,12 @@ export function mountWorkshop(root, extension = {}) {
     if (fold.mode==='horizontal') line(0,.5,1,.5);
     if (fold.mode==='quarter') {line(.5,0,.5,.5);line(0,.5,.5,.5);}
     if (fold.mode==='eighth') {line(0,0,.5,.5);line(.5,0,.5,.5);}
+    if (fold.definition.order) {
+      const region=fold.definition.region, start=region[1], end=region.at(-1);
+      line(.5,.5,start.x,start.y);line(.5,.5,end.x,end.y);
+      const center=toFoldView({x:.5,y:.5},fold.mode);
+      ctx.setLineDash([]);ctx.beginPath();ctx.arc(center.x*size,center.y*size,3*pixel,0,Math.PI*2);ctx.fillStyle='#746454';ctx.fill();
+    }
     ctx.restore();
   }
 
@@ -225,7 +233,8 @@ export function mountWorkshop(root, extension = {}) {
     });
   }
   if (button('preview')) on(button('preview'), 'click', () => {
-    renderPaper(largePreview, finalPaths(), color, fold?.finalGroups);
+    if(fold && fold.state!=='unfolded')return;
+    renderFinal(largePreview);
     previewDialog.showModal();
   });
 
@@ -247,7 +256,7 @@ export function mountWorkshop(root, extension = {}) {
       if (!fold.mode || stroke) return;
       fold.state=fold.state==='unfolded' ? 'editing' : 'unfolded';
       rebuild();
-      announce(fold.state==='unfolded' ? `已展开为 ${fold.definition.copies} 个对称区域，可下载完整作品或返回剪裁。` : '已返回折纸剪裁，原有路径和折叠方式已保留。');
+      announce(fold.state==='unfolded' ? `已展开为 ${fold.definition.order ? `${fold.definition.order} 向团花（${fold.definition.copies} 个镜像扇区）` : `${fold.definition.copies} 个对称区域`}，可下载完整作品或返回剪裁。` : '已返回折纸剪裁，原有路径和折叠方式已保留。');
     });
     announce('先选择折法。可从纸外起笔，点击展开后再看完整作品。');
   }
@@ -259,7 +268,7 @@ export function mountWorkshop(root, extension = {}) {
     announce('正在生成 2048 × 2048 透明底 PNG…');
     try {
       const filename=root.dataset.mode==='trace'?'一纸生花_纹样临摹.png':fold?'一纸生花_折纸成花.png':'一纸生花_自由剪纸.png';
-      await downloader.download(finalPaths(),color,filename,fold?.finalGroups);
+      await downloader.download(finalPaths(),color,filename,fold?.finalGroups,fold?renderFinal:null);
       announce('PNG 已生成并交给浏览器下载，请在下载列表中查看。');
     } catch (error) {
       announce(`下载失败：${error.message || '请检查浏览器下载设置后重试。'}`);

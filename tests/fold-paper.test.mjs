@@ -72,3 +72,43 @@ test('session reuses base cut history; unfolding never appends derived copies',(
   assert.equal(session.history.paths.length+session.history.future.length,0);
   assert.throws(()=>session.select('unknown'));
 });
+
+for(const [mode,n] of [['radial3',3],['radial6',6]]) {
+  test(`${mode}: known polar orbits, rigid triangle/irregular geometry and exact coverage`,()=>{
+    const polar=(r,d)=>({x:.5+r*Math.cos(d*Math.PI/180),y:.5+r*Math.sin(d*Math.PI/180)});
+    const beta=180/n;
+    const input=polar(.3,beta*.31);
+    const copies=unfoldPaths([[input]],mode).map(p=>p[0]);
+    assert.equal(copies.length,2*n);
+    for(let k=0;k<n;k++)for(const sign of [1,-1]) {
+      const expected=polar(.3,k*360/n+sign*beta*.31);
+      assert.equal(copies.filter(p=>Math.hypot(p.x-expected.x,p.y-expected.y)<1e-10).length,1);
+    }
+    const triangle=[polar(.15,beta*.15),polar(.35,beta*.35),polar(.24,beta*.8)];
+    const curve=Array.from({length:61},(_,i)=>{const t=i*2*Math.PI/61;return polar(.28+.05*Math.cos(t)+.008*Math.cos(3*t),beta*(.5+.22*Math.sin(t)))});
+    for(const original of [triangle,curve])for(const copy of unfoldPaths([original],mode)) {
+      near(area(copy),area(original));
+      const radii=points=>points.map(p=>Math.hypot(p.x-.5,p.y-.5)).sort((a,b)=>a-b);
+      radii(original).forEach((r,i)=>near(r,radii(copy)[i]));
+    }
+    near(area(FOLDS[mode].region)*2*n,area(FOLDS[mode].sheet));
+    const outside=[polar(.2,-beta*.2),polar(.4,-beta*.2),polar(.4,beta*.3),polar(.2,beta*.3)];
+    assert.ok(!inFold(outside[0],mode));
+    assert.ok(validCut(clipFold(outside,mode)));
+    assert.ok(clipFold(outside,mode).every(p=>inFold(p,mode)));
+  });
+  test(`${mode}: persistence-compatible clipped paths and history survive view changes`,async()=>{
+    const {validateDocument}=await import('../core/static/core/js/work-store.js');
+    const session=new FoldSession();session.select(mode);
+    const points=clipFold([{x:.4,y:.4},{x:1.1,y:.4},{x:1.1,y:.9},{x:.4,y:.9}],mode);
+    assert.ok(session.history.add(points));
+    const data={mode:'fold',foldMode:mode,foldState:'editing',color:'#a63127',paths:session.history.paths};
+    validateDocument(JSON.parse(JSON.stringify(data)));
+    const final=structuredClone(session.finalPaths);
+    session.state='unfolded';session.state='editing';
+    session.history.undo();session.history.redo();
+    assert.deepEqual(session.finalPaths,final);
+    session.history.undo();session.history.add(points);assert.equal(session.history.future.length,0);
+    session.select('vertical');assert.equal(session.history.paths.length,0);
+  });
+}

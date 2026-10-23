@@ -28,3 +28,7 @@ html {scrollbar-gutter:stable}
 @media(max-width:760px){.fold-workspace .workspace-toolbar{grid-template-columns:1fr}.fold-choices{grid-template-columns:repeat(4,minmax(0,1fr))}.fold-choices button{flex-direction:column;align-items:center;text-align:center;gap:6px}.fold-workspace .paper-options{border:0;border-top:1px solid var(--line);padding:15px 0 0;display:flex;gap:20px;align-items:center;margin:0}.fold-workspace .paper-options h3,.fold-workspace .paper-options p{margin:0}.fold-workspace .tool-tip{align-items:flex-start}.fold-workspace .tool-tip p{font-size:10px}.fold-workspace .preview-actions{margin-left:auto}}
 @media(max-width:540px){.fold-progress{gap:14px;font-size:10px}.fold-choices{gap:6px}.fold-choices button{padding:8px 2px;font-size:11px}.fold-choices button small{font-size:8px}.fold-icon{width:26px;height:26px}.fold-workspace .paper-options{gap:14px}.fold-workspace .preview-actions{width:100%}}
 @media(prefers-reduced-motion:reduce){.fold-workspace[data-state="unfolded"] #paper-canvas{animation:none}}
+
+.fold-icon.radial3 {border-radius:50%;background:conic-gradient(from 90deg,var(--red) 0 60deg,#ddd5c8 60deg)}
+.fold-icon.radial6 {border-radius:50%;background:conic-gradient(from 90deg,var(--red) 0 30deg,#ddd5c8 30deg)}
+@media(max-width:760px){.fold-choices{grid-template-columns:repeat(3,minmax(0,1fr))}}

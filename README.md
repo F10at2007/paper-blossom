@@ -129,3 +129,11 @@ node tests/browser-free-cut.mjs
 移动和缩放每次松手只记一次历史，窗口失焦、触控取消或画布尺寸变化会撤回未完成操作。原有旋转按钮、保存恢复、撤销重做、预览和 PNG 保持可用。选框和控制点只绘制在辅助画布中。
 
 新增验收：`node --test tests/composition-box.test.mjs`；启动独立测试浏览器后运行 `node tests/browser-composition-box.mjs`。详见 [矩形选框验收记录](docs/composition-box.md)。
+
+## 三折、六折团花
+
+折纸成花新增三折（60° 基础扇区、三向对称）和六折（30° 基础扇区、六向对称）。用户路径先镜像再绕中心旋转，分别产生 6 / 12 个对应扇区；不使用预制图案。新团花使用圆形纸张外缘，旧折法仍为方纸。
+
+折后纸片居中，可从纸外起笔；只有点击展开才显示完整效果并启用下载。撤销、重做、换色、保存恢复及 2048 × 2048 透明 PNG 沿用既有流程。五折未实现。
+
+验收：`node --test tests/*.test.mjs`；启动独立 Chrome 129 后运行 `node tests/browser-radial-cut.mjs`（可通过 `BASE_URL` 指定测试服务器，默认 8000）。实现与实际测试边界见 [团花扩展验收](docs/radial-folds.md)。
