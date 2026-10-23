@@ -1,6 +1,7 @@
-import { MOTIFS,objectPoint } from './patterns.js';
+import { objectBox,inObjectBox,cornerAt,scaleFromCorner } from './composition-box.js';
+import { MOTIFS } from './patterns.js';
 import { PAPER_COLORS,traceCut } from './free-paper.js';
-import { CompositionHistory,containsObject,renderComposition } from './composition-model.js';
+import { CompositionHistory,renderComposition } from './composition-model.js';
 import { createPaperDownloader } from './paper-download.js';
 import { attachPersistence } from './work-persistence.js';
 
@@ -15,11 +16,15 @@ if(root){
     renderComposition(paper,model.objects,color);ctx.clearRect(0,0,1024,1024);
     const object=current();
     if(object){
-      const corners=[{x:.02,y:.02},{x:.98,y:.02},{x:.98,y:.98},{x:.02,y:.98}].map(p=>objectPoint(p,object));
-      traceCut(ctx,corners,1024,1024);ctx.setLineDash([12,8]);ctx.lineWidth=4;ctx.strokeStyle='#262b25';ctx.stroke();ctx.setLineDash([]);
+      const {corners}=objectBox(object),pixel=1024/input.getBoundingClientRect().width;
+      ctx.save();traceCut(ctx,corners,1024,1024);
+      ctx.lineWidth=3*pixel;ctx.strokeStyle='#fff9e9';ctx.stroke();
+      ctx.lineWidth=1.2*pixel;ctx.strokeStyle='#51463c';ctx.stroke();
+      for(const p of corners){ctx.fillStyle='#fff9e9';ctx.strokeStyle='#a63127';ctx.lineWidth=1.3*pixel;ctx.beginPath();ctx.rect(p.x*1024-4*pixel,p.y*1024-4*pixel,8*pixel,8*pixel);ctx.fill();ctx.stroke();}
+      ctx.restore();
       root.querySelector('#selected-name').textContent=MOTIFS.find(m=>m.id===object.motif).name;
       root.querySelector('#object-settings').textContent=`大小 ${Math.round(object.size*100)}% · 旋转 ${object.rotation}°`;
-    }else{selected=null;root.querySelector('#selected-name').textContent='未选中';root.querySelector('#object-settings').textContent='点击纸片选择，点击空白取消选择。';}
+    }else{selected=null;root.querySelector('#selected-name').textContent='未选中';root.querySelector('#object-settings').textContent='框内拖动，四角等比缩放；点击空白取消选择。';}
     for(const action of ['smaller','larger','rotate-left','rotate-right','duplicate','delete','deselect'])button(action).disabled=!object||!!drag;
     button('smaller').disabled=!object||!!drag||object.size<=.08;
     button('larger').disabled=!object||!!drag||object.size>=.8;
@@ -32,7 +37,7 @@ if(root){
   function add(motif){
     if(drag)return;
     if(model.objects.length>=80){notify('每幅作品最多 80 个元素，请先删除部分纹样。');return;}
-    const object={id:crypto.randomUUID(),motif,x:.5,y:.5,size:.34,rotation:0};selected=object.id;model.commit([...model.objects,object]);redraw();notify('已添加纹样。拖动它，或调整大小与角度。');
+    const object={id:crypto.randomUUID(),motif,x:.5,y:.5,size:.34,rotation:0};selected=object.id;model.commit([...model.objects,object]);redraw();notify('已添加纹样。拖动矩形框内部移动，拖动四角等比缩放。');
   }
   function library(category){
     const container=root.querySelector('#motif-library');container.replaceChildren();
@@ -52,18 +57,27 @@ if(root){
     if(commit&&JSON.stringify(after)!==JSON.stringify(ended.original))model.commit(after);
     redraw();
   }
+  function movePointer(e){
+    const p=point(e),object=current();
+    if(drag.kind==='scale')object.size=scaleFromCorner(drag.object,drag.corner,drag.start,p);
+    else {object.x=Math.max(0,Math.min(1,drag.object.x+p.x-drag.start.x));object.y=Math.max(0,Math.min(1,drag.object.y+p.y-drag.start.y));}
+    redraw();
+  }
   on(input,'pointerdown',e=>{
     if(drag||!e.isPrimary||e.button!==0)return;e.preventDefault();
-    const p=point(e),object=[...model.objects].reverse().find(o=>containsObject(p,o));selected=object?.id||null;
-    if(object){drag={pointer:e.pointerId,start:p,original:structuredClone(model.objects),x:object.x,y:object.y};input.setPointerCapture(e.pointerId);notify('正在移动；松手确定位置。');}
+    const p=point(e),tolerance=(e.pointerType==='touch'?18:11)/input.getBoundingClientRect().width;
+    const corner=current()?cornerAt(p,current(),tolerance):-1;
+    const object=corner>=0?current():[...model.objects].reverse().find(o=>inObjectBox(p,o));selected=object?.id||null;
+    if(object){drag={pointer:e.pointerId,kind:corner>=0?'scale':'move',corner,start:p,original:structuredClone(model.objects),object:{...object}};input.setPointerCapture(e.pointerId);notify(corner>=0?'正在等比缩放；松手确定大小。':'正在移动；松手确定位置。');}
     redraw();
   },{passive:false});
   on(input,'pointermove',e=>{
-    if(!drag||e.pointerId!==drag.pointer)return;e.preventDefault();
+    if(!drag){const p=point(e);input.style.cursor=current()&&cornerAt(p,current(),11/input.getBoundingClientRect().width)>=0?'nwse-resize':[...model.objects].reverse().some(o=>inObjectBox(p,o))?'grab':'default';return;}
+    if(e.pointerId!==drag.pointer)return;e.preventDefault();
     if(e.pointerType==='mouse'&&!(e.buttons&1)){finish(false);return;}
-    const p=point(e),object=current();object.x=Math.max(0,Math.min(1,drag.x+p.x-drag.start.x));object.y=Math.max(0,Math.min(1,drag.y+p.y-drag.start.y));redraw();
+    movePointer(e);
   },{passive:false});
-  on(input,'pointerup',e=>{if(drag&&e.pointerId===drag.pointer){e.preventDefault();finish(true);}},{passive:false});
+  on(input,'pointerup',e=>{if(drag&&e.pointerId===drag.pointer){e.preventDefault();movePointer(e);finish(true);}},{passive:false});
   on(input,'pointercancel',()=>finish(false));on(input,'lostpointercapture',()=>finish(false));on(window,'blur',()=>finish(false));
   on(document,'visibilitychange',()=>{if(document.hidden)finish(false);});
   on(window,'keydown',e=>{if(e.key==='Escape'){finish(false);selected=null;redraw();}});
@@ -84,6 +98,6 @@ if(root){
   });
   library('花卉');redraw();
   attachPersistence({root,snapshot:()=>({mode:'compose',color,objects:structuredClone(model.objects)}),notify,signal:listeners.signal,restore:data=>{model.objects=data.objects;model.past=[];model.future=[];color=data.color;selected=null;for(const item of root.querySelectorAll('[data-color]'))item.setAttribute('aria-pressed',String(item.dataset.color===color));root.querySelector('#paper-color-name').textContent=PAPER_COLORS.find(c=>c.value===color).name;redraw();}});
-  const observer=new ResizeObserver(()=>finish(false));observer.observe(input);
+  const observer=new ResizeObserver(()=>{finish(false);redraw();});observer.observe(input);
   on(window,'pagehide',e=>{finish(false);downloader.release();if(!e.persisted){observer.disconnect();listeners.abort();}});
 }

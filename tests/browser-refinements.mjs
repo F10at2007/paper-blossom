@@ -156,7 +156,7 @@ try{
  await save('删除后尝试保存');await check('deleted original does not lose current edits',`document.querySelector('#workshop-status').textContent.includes('另存副本')&&document.querySelector('#cut-count').textContent.includes('3 次')`);
  const rescued=await save('救回副本',true);assert.notEqual(rescued,shared);checks.push('deleted record saved as new copy without reload');
  await navigate('/workshop/compose/');await evaluate(`document.querySelector('[data-category="几何"]').click();document.querySelector('[data-motif="circle"]').click();document.querySelector('[data-action="deselect"]').click()`);
- await mouseStroke([[.5,.5]]);await check('transparent ring centre passes through selection',`document.querySelector('#selected-name').textContent==='未选中'`);
+ await mouseStroke([[.5,.5]]);await check('rectangle selection includes transparent ring centre',`document.querySelector('#selected-name').textContent==='圆环'`);
  await evaluate(`document.querySelector('[data-category="花卉"]').click();document.querySelector('[data-motif="flower"]').click()`);
  await check('flower does not paint former outside fragment',`(async()=>{const {renderComposition}=await import('/static/core/js/composition-model.js');const c=document.createElement('canvas');c.width=c.height=1024;renderComposition(c,[{motif:'flower',x:.5,y:.5,size:.8,rotation:0}],'#a63127');return c.getContext('2d').getImageData(512,307,1,1).data[3]===0})()`);
  await check('six-point motif outside region is transparent',`(async()=>{const {renderComposition}=await import('/static/core/js/composition-model.js');const c=document.createElement('canvas');c.width=c.height=1024;renderComposition(c,[{motif:'star',x:.5,y:.5,size:.8,rotation:0}],'#a63127');return c.getContext('2d').getImageData(512,299,1,1).data[3]===0})()`);
