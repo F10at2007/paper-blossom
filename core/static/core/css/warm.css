@@ -16,8 +16,9 @@
   --red-deep: #8b1a12;
   --ink: #34211a;
   --muted: #7d5a49;
-  --serif: "Songti SC", "STSong", "SimSun", serif;
-  --kai: "KaiTi", "STKaiti", "Kaiti SC", "Songti SC", serif;
+  --serif: "SimSun", "Songti SC", "STSong", serif;
+  --sans: var(--serif);
+  --kai: var(--serif);
   --shadow-soft: 0 18px 40px rgba(50, 22, 12, .28);
 }
 
@@ -25,6 +26,8 @@ body {
   background: var(--brown-800);
   color: var(--ink);
 }
+
+input, select, textarea { font-family: var(--serif); }
 
 body::before {
   content: "";
@@ -1196,8 +1199,9 @@ body.gate-open {
 .mode-art:hover { transform: translateY(-5px); }
 
 .modes-page .mode-art { padding: 0; background: transparent; aspect-ratio: auto; }
-.modes-page .mode-art .workbench-scroll { display: block; width: 100%; max-height: none; height: auto; object-fit: contain; filter: none; }
+.modes-page .mode-art .workbench-scroll { display: block; width: 112%; max-width: none; max-height: none; height: auto; margin-left: -6%; object-fit: contain; filter: none; }
 .modes-page .mode-art:hover .workbench-scroll { transform: none; }
+.modes-page .mode-copy { width: 88%; margin-inline: auto; padding: 18px 20px 20px; }
 
 .scroll-rod {
   position: relative;

@@ -140,3 +140,50 @@
   .modes-page .mode-art,
   .modes-page .mode-copy { max-width: 420px; margin-inline: auto; }
 }
+
+/* 放大说明、辅助标签和操作文字，保留标题的原有层级。 */
+body { font-size: 16px; }
+.eyebrow, .mode-copy .eyebrow, .site-brand .brand-text small,
+.footer .footer-meta, .footer-meta span, .mm-card small,
+.panel-heading > span, .fold-choices button small, .canvas-bottom span,
+.motif-library span, .tool-tip p, .preview-caption, .placeholder-note,
+.fold-result-note, .paper-options p, #paper-color-name,
+.workshop-quickbar > span, .fold-progress, .heritage-hero figcaption,
+.status-tag, .back-link, .workshop-back, .art-caption, .phase-note {
+  font-size: 14px;
+}
+.mode-copy p, .mode-copy .text-link, .fold-choices button span:last-child,
+.reference-choices button, .object-controls button, .category-tabs button,
+.workshop-quickbar .button, .saved-actions a, .saved-actions button,
+.footer-nav a, .site-nav a { font-size: 15px; }
+
+/* 非遗介绍的正文与列表使用更舒适的阅读字号。 */
+.heritage-page .heritage-hero p:not(.eyebrow):not(.heritage-source),
+.heritage-page .chapter p,
+.heritage-page .chapter ul:not(.source-list),
+.heritage-page .chapter ol,
+.heritage-page .quote { font-size: 18px; }
+.heritage-page .heritage-hero .eyebrow,
+.heritage-page .heritage-source,
+.heritage-page .heritage-hero figcaption,
+.heritage-page .chapter-index span,
+.heritage-page .source-list { font-size: 14px; }
+
+/* 工作台标题与暖棕色磨砂玻璃说明卡。 */
+.modes-page .page-heading { padding-block: 20px 28px; }
+.modes-page .page-heading h1 { margin: 0; }
+.modes-page .workbench-heading { width: min(100%, 850px); height: auto; margin-inline: auto; }
+.modes-page .mode-copy {
+  border: 1px solid rgba(255, 232, 208, .12);
+  border-radius: 15px;
+  background: rgba(235, 200, 181, .22);
+  box-shadow: 0 3px 5px rgba(40, 16, 9, .3), inset 0 1px 0 rgba(255, 245, 232, .12);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+.modes-page .mode-copy::before,
+.modes-page .mode-copy::after { content: none; }
+.modes-page .mode-copy .eyebrow { color: #f1d5bd; }
+.modes-page .mode-copy h3 { color: #fff3df; }
+.modes-page .mode-copy p { color: #f5e2d1; }
+.modes-page .mode-copy .text-link { color: #fff0da; border-bottom-color: rgba(255, 240, 218, .35); }
