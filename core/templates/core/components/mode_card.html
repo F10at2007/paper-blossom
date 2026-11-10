@@ -1,2 +1,18 @@
 {% load static %}
-<article class="mode-card"><a class="mode-art art-{{ mode.slug }}" href="{% url 'core:workshop' mode.slug %}" aria-label="进入{{ mode.name }}工作台"><span class="art-number">{{ mode.number }}</span><img src="{% static 'core/art/' %}{{ mode.motif }}.svg" alt="{{ mode.name }}原创剪纸示意纹样" width="280" height="280"><span class="art-caption">{{ mode.tag }}</span></a><div class="mode-copy"><span class="eyebrow">MODE / {{ mode.number }}</span><h3>{{ mode.name }}</h3><p>{{ mode.description }}</p><a class="text-link" href="{% url 'core:workshop' mode.slug %}">进入工坊 <span aria-hidden="true">↗</span></a></div></article>
+<article class="mode-card rod-{{ mode.slug }}">
+  <a class="mode-art" href="{% url 'core:workshop' mode.slug %}" aria-label="进入{{ mode.name }}工作台">
+    <span class="scroll-rod scroll-rod-top" aria-hidden="true"></span>
+    <span class="scroll-paper">
+      <span class="art-number">{{ mode.number }}</span>
+      <img src="{% static 'core/media/card-' %}{{ mode.art }}.webp" alt="{{ mode.name }}：卷轴上的{{ mode.tag }}剪纸纹样" width="680" height="1089">
+      <span class="paper-seal" aria-hidden="true">{{ mode.seal }}</span>
+    </span>
+    <span class="scroll-rod scroll-rod-bottom" aria-hidden="true"></span>
+  </a>
+  <div class="mode-copy">
+    <span class="eyebrow">MODE / {{ mode.number }} · {{ mode.tag }}</span>
+    <h3>{{ mode.name }}</h3>
+    <p>{{ mode.description }}</p>
+    <a class="text-link" href="{% url 'core:workshop' mode.slug %}">进入工坊 <span aria-hidden="true">↗</span></a>
+  </div>
+</article>

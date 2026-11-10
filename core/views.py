@@ -2,8 +2,13 @@ from django.http import Http404
 from django.shortcuts import render
 from .modes import MODES
 
+
 def index(request):
-    return render(request, 'core/index.html', {'page': 'home', 'modes': MODES})
+    return render(request, 'core/home.html', {'page': 'home', 'modes': MODES})
+
+
+def heritage(request):
+    return render(request, 'core/heritage.html', {'page': 'heritage', 'modes': MODES})
 
 
 def modes(request):

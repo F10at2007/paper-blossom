@@ -1,9 +1,20 @@
 {% extends 'core/base.html' %}{% load static %}
-{% block title %}{{ mode.name }} · 一纸生花{% endblock %}
+{% block title %}{{ mode.name }} · 创作工坊｜一纸生花{% endblock %}
+{% block description %}{{ mode.name }}：{{ mode.instruction }}{% endblock %}
 {% block extra_head %}{% if mode.slug != 'compose' %}
 <link rel="stylesheet" href="{% static 'core/css/free-workshop.css' %}">
 {% if mode.slug == 'fold' %}<link rel="stylesheet" href="{% static 'core/css/fold-workshop.css' %}">{% endif %}
 <link rel="stylesheet" href="{% static 'core/css/final-workshop.css' %}">
 {% if mode.slug == 'trace' %}<script type="module" src="{% static 'core/js/trace-workshop.js' %}"></script>{% else %}<script type="module" src="{% static 'core/js/free-workshop.js' %}"></script>{% endif %}
 {% else %}<link rel="stylesheet" href="{% static 'core/css/free-workshop.css' %}"><link rel="stylesheet" href="{% static 'core/css/final-workshop.css' %}"><script type="module" src="{% static 'core/js/compose-workshop.js' %}"></script>{% endif %}{% endblock %}
-{% block content %}<section class="wrap page-section workshop-page"><a class="back-link" href="{% url 'core:modes' %}">← 返回模式选择</a><div class="workshop-heading"><div><p class="eyebrow">WORKSHOP / MODE {{ mode.number }}</p><h1>{{ mode.name }}</h1><p>{{ mode.instruction }}</p></div><span class="status-tag">{% if mode.slug == 'fold' %}折纸成花 · 几何新生{% elif mode.slug == 'free' %}自由剪裁 · 即刻创作{% else %}原创纹样 · 即刻创作{% endif %}</span></div>{% if mode.slug != 'compose' %}{% include 'core/components/free_workspace.html' %}{% else %}{% include 'core/components/compose_workspace.html' %}{% endif %}</section>{% endblock %}
+{% block content %}
+<section class="page-section workshop-page">
+  <div class="sr-only-heading">
+    <p class="eyebrow">WORKSHOP / MODE {{ mode.number }} · {{ mode.tag }}</p>
+    <h1>{{ mode.name }}</h1>
+    <p>{{ mode.instruction }}</p>
+  </div>
+  <a class="back-link workshop-back" href="{% url 'core:modes' %}">← 创作工坊</a>
+  {% if mode.slug != 'compose' %}{% include 'core/components/free_workspace.html' %}{% else %}{% include 'core/components/compose_workspace.html' %}{% endif %}
+</section>
+{% endblock %}

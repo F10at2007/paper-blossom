@@ -2,10 +2,10 @@
 {% block title %}我的作品 · 一纸生花{% endblock %}
 {% block extra_head %}<link rel="stylesheet" href="{% static 'core/css/free-workshop.css' %}"><link rel="stylesheet" href="{% static 'core/css/final-workshop.css' %}"><script type="module" src="{% static 'core/js/my-works.js' %}"></script>{% endblock %}
 {% block content %}
-<section class="wrap page-section works-page" id="works-manager">
+<section class="works-page" id="works-manager">
   <a class="back-link" href="{% url 'core:index' %}">← 返回首页</a>
   <div class="section-heading works-heading"><div><p class="eyebrow">MY COLLECTION / 纸上收藏</p><h1>把心意，留在纸上<span class="red">。</span></h1><p>每一次落剪，都值得好好收藏。</p></div><a class="button primary" href="{% url 'core:modes' %}">新的创作 <span>＋</span></a></div>
-  <div class="collection-bar"><h2>我的作品 <span id="works-count">0</span></h2><label>模式 <select id="works-filter" aria-label="筛选作品模式"><option value="">全部作品</option><option value="fold">折纸成花</option><option value="free">自由剪艺</option><option value="trace">纹样临摹</option><option value="compose">百纹成画</option></select></label></div>
+  <div class="collection-bar"><h2>我的作品 <span id="works-count">0</span></h2><label>模式 <select id="works-filter" aria-label="筛选作品模式"><option value="">全部作品</option><option value="fold">对称之美</option><option value="free">自由剪艺</option><option value="trace">纹样临摹</option><option value="compose">百纹成画</option></select></label></div>
   <div class="saved-grid" id="works-list"></div>
   <div class="empty-state" id="works-empty" hidden><div class="empty-art"><img src="{% static 'core/art/flower.svg' %}" alt="" width="120" height="120"></div><h2 id="empty-title">第一朵花，等你来剪</h2><p id="empty-description">创作后点击“保存作品”，这里就会收好你的心意。</p><a class="button primary" href="{% url 'core:modes' %}">去工坊看看 <span>↗</span></a></div>
   <p id="works-status" class="works-status" role="status" aria-live="polite"></p>

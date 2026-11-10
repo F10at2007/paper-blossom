@@ -3,7 +3,7 @@ import { FOLDS,inFold } from './fold-paper.js';
 import { MOTIFS,REFERENCES } from './patterns.js';
 export const STORAGE_KEY='paper-blooms.works.v1';
 export const MAX_STORAGE_CHARACTERS=1500000;
-export const MODE_NAMES={fold:'折纸成花',free:'自由剪艺',trace:'纹样临摹',compose:'百纹成画'};
+export const MODE_NAMES={fold:'对称之美',free:'自由剪艺',trace:'纹样临摹',compose:'百纹成画'};
 const fail=()=>{throw new Error('本地作品数据损坏或版本不兼容。原记录未修改，请先在我的作品中导出备份。');};
 const finite=(n,min,max)=>Number.isFinite(n)&&n>=min&&n<=max;
 

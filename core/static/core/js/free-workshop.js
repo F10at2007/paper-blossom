@@ -267,7 +267,7 @@ export function mountWorkshop(root, extension = {}) {
     updateButtons();
     announce('正在生成 2048 × 2048 透明底 PNG…');
     try {
-      const filename=root.dataset.mode==='trace'?'一纸生花_纹样临摹.png':fold?'一纸生花_折纸成花.png':'一纸生花_自由剪纸.png';
+      const filename=root.dataset.mode==='trace'?'一纸生花_纹样临摹.png':fold?'一纸生花_对称之美.png':'一纸生花_自由剪艺.png';
       await downloader.download(finalPaths(),color,filename,fold?.finalGroups,fold?renderFinal:null);
       announce('PNG 已生成并交给浏览器下载，请在下载列表中查看。');
     } catch (error) {

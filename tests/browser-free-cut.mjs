@@ -88,7 +88,7 @@ async function download(name) {
   await until(() => downloads.length > index, 'No browser download event');
   const item = downloads[index];
   await until(() => completedDownloads.has(item.guid), 'PNG download did not complete');
-  assert.equal(item.suggestedFilename, '一纸生花_自由剪纸.png');
+  assert.equal(item.suggestedFilename, '一纸生花_自由剪艺.png');
   const bytes = await fs.readFile(path.join(output, 'downloads', item.guid));
   assert.equal(bytes.subarray(1,4).toString(), 'PNG');
   await fs.writeFile(path.join(output, `${name}.png`), bytes);

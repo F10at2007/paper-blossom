@@ -1,0 +1,109 @@
+{% extends 'core/base.html' %}{% load static %}
+{% block title %}非遗剪纸｜一纸千年，剪刀上的中国{% endblock %}
+{% block description %}中国剪纸于 2009 年列入联合国教科文组织人类非物质文化遗产代表作名录。这里讲它从北朝团花到今日窗花的源流、剪与刻的技法谱系、阳刻阴刻的造型语言、图必有意意必吉祥的纹样寓意，以及各地流派的差别。{% endblock %}
+{% block content %}
+<section class="heritage-page">
+  <a class="back-link" href="{% url 'core:index' %}">← 返回首页</a>
+
+  <div class="heritage-hero">
+    <div>
+      <p class="eyebrow">CHINESE PAPER-CUT / 人类非物质文化遗产</p>
+      <h1>一纸千年，<br>剪刀上的中国</h1>
+      <p>中国剪纸是用剪刀或刻刀在纸上镂空成画的手艺。它不画、不描、不上色，只靠「去掉」来成形——把不要的地方剪去，留下的那部分就是图案。一张纸、一把剪子，就能把花鸟、人物、祈愿和节令，全部收进方寸之间。</p>
+      <p class="heritage-source">2009 年，中国剪纸列入联合国教科文组织《人类非物质文化遗产代表作名录》。</p>
+    </div>
+    <figure>
+      <img src="{% static 'core/media/heritage-flower.webp' %}" alt="剪纸团花：牡丹、梅枝、喜鹊与祥云，红纸镂空" width="1008" height="1008">
+      <figcaption>团花：牡丹居中，梅枝、喜鹊与祥云环绕成圆——「圆满」正是团花的构图本意</figcaption>
+    </figure>
+  </div>
+
+  <div class="article-body">
+
+    <article class="chapter" id="origin">
+      <div class="chapter-index"><b>壹</b><span>ORIGIN / 源流</span></div>
+      <h2>纸有了，剪纸才可能开始</h2>
+      <p>剪纸的前提是纸。东汉蔡伦改进造纸术后，纸才逐渐便宜、可裁可叠，剪刻镂空的做法才有了物质基础。在此之前，同样的镂空语言存在于金箔、皮革、绢帛和树叶上——「剪」的动作很古老，「剪」的材料一直在变。</p>
+      <p>目前所见最早的剪纸实物，出自新疆吐鲁番阿斯塔那古墓群等遗址的<strong>北朝时期</strong>作品，其中有对马团花、对猴团花一类以重复单元围成圆的图案。它们的剪法已经相当成熟：折纸、剪刻、展开，靠对称重复完成构图——这正是今天团花剪纸的基本方法。</p>
+      <p>唐代剪纸更多见于招魂、祭祀与丧葬场合；敦煌等地也出土过唐代剪纸实物。宋代剪纸进入日常生活，并被用于瓷器装饰（吉州窑的剪纸贴花）、灯彩与走马灯。明清两代，剪纸在民间彻底铺开，窗花、门笺、喜花、鞋花、枕顶花、刺绣花样，几乎覆盖了年节与婚丧嫁娶的每一种场合。</p>
+      <div class="quote">「千刻不落，万剪不断。」——民间对剪纸的一句老话，说的是一件好作品不该在镂空处断掉。</div>
+    </article>
+
+    <article class="chapter" id="craft">
+      <div class="chapter-index"><b>贰</b><span>CRAFT / 技法</span></div>
+      <h2>剪、刻、撕、烫、衬、点</h2>
+      <p>「剪纸」是统称。同样是镂空，工具不同，出来的语言差别很大：</p>
+      <div class="split">
+        <div class="split-cell"><h3>剪</h3><p>用剪刀直接在纸上走线，一次可剪多层。线条连贯、边缘利落，带剪刀特有的折角与毛边，是分布最广的做法。</p></div>
+        <div class="split-cell"><h3>刻</h3><p>把纸铺在蜡板或木板上，用刻刀垂直切下。能一次刻十几层，适合极细的纹样，河北蔚县、浙江乐清都以刻工见长。</p></div>
+        <div class="split-cell"><h3>撕</h3><p>不用工具，徒手撕出轮廓。边缘保留纸纤维的毛涩感，多见于即兴的小幅作品。</p></div>
+        <div class="split-cell"><h3>烫</h3><p>用燃着的香或烙铁在纸上烫出焦痕，以褐色浓淡代替镂空，常见于局部点缀。</p></div>
+        <div class="split-cell"><h3>衬色</h3><p>剪出阳纹骨架后，在背后衬上彩纸或金箔，让颜色透过镂空显出来，广东佛山一脉的「铜衬料」即是代表。</p></div>
+        <div class="split-cell"><h3>点色</h3><p>刻成白纹后，用染料逐块点染。蔚县剪纸的浓艳颜色就来自这一步，是「刻」与「染」的组合。</p></div>
+      </div>
+    </article>
+
+    <article class="chapter" id="language">
+      <div class="chapter-index"><b>叁</b><span>LANGUAGE / 造型语言</span></div>
+      <h2>阳刻留线，阴刻留块</h2>
+      <p>剪纸只有两种基本关系：留纸和去纸。以留纸为线、去纸为底，叫<strong>阳刻</strong>——线条必须彼此相连，否则会散；以去纸为线、留纸为底，叫<strong>阴刻</strong>——块面必须彼此断开，否则会连成一片。两者常常混用：大块面用阴刻压住画面，细节用阳刻挑出精神。</p>
+      <p>因为线条必须连住，剪纸里有一个专门的说法叫<strong>「纸桥」</strong>：镂空之间那段不能剪断的纸。纸桥的位置决定画面的节奏，也决定作品能不能立得住。留白则是另一种克制——不该有的地方空着，图案才有呼吸。</p>
+      <p>这也解释了为什么剪纸的形体总有些「不真实」：为了连住，花瓣要扭、鸟尾要接、云纹要缠。这种迁就不是缺陷，而是剪纸自己的造型逻辑。本工坊的「纹样临摹」把这两件事单独拎出来练：先看清轮廓，再决定纸桥留在哪里。</p>
+    </article>
+
+    <article class="chapter" id="motif">
+      <div class="chapter-index"><b>肆</b><span>MOTIF / 纹样寓意</span></div>
+      <h2>图必有意，意必吉祥</h2>
+      <p>民间剪纸几乎不做纯装饰。每一个题材都有对应的说法，靠谐音、象征和组合把祝愿嵌进去：</p>
+      <ul>
+        <li><b>牡丹</b>——花中之王，取富贵之意。</li>
+        <li><b>喜鹊与梅枝</b>——「梅」谐「眉」，构成「喜上眉梢」。</li>
+        <li><b>莲花与鱼</b>——谐「连年有余」。</li>
+        <li><b>石榴</b>——多籽，寓多子。</li>
+        <li><b>蝙蝠</b>——谐「福」，常与寿字、铜钱组合成「福寿双全」。</li>
+        <li><b>团花</b>——以中心为轴层层向外铺展，取圆满、周全。</li>
+        <li><b>抓髻娃娃</b>——陕北一带的经典题材，与祈子、护生相关。</li>
+        <li><b>云纹、缠枝、回纹</b>——多作边饰，负责把画面收住。</li>
+      </ul>
+      <p>需要说明的是：本工坊「百纹成画」里的十二款素材是基于几何结构重新绘制的练习纹样，名称取自其造型，<strong>不代为编造传统寓意</strong>。上面这些说法只对应有据可查的传统题材。</p>
+    </article>
+
+    <article class="chapter" id="schools">
+      <div class="chapter-index"><b>伍</b><span>SCHOOLS / 地域流派</span></div>
+      <h2>一方水土，一种刀法</h2>
+      <p>剪纸在各地长成了很不一样的面貌，差别主要在工具、色彩和题材：</p>
+      <div class="split">
+        <div class="split-cell"><h3>陕北 · 陕西</h3><p>大剪刀、单色红纸，形体粗犷饱满，常以抓髻娃娃、十二生肖、农耕场景入题，风格古朴。</p></div>
+        <div class="split-cell"><h3>蔚县 · 河北</h3><p>刻刀为主，先刻后点染，色彩浓烈，被称为「点彩剪纸」，戏剧人物与花卉是常见题材。</p></div>
+        <div class="split-cell"><h3>高密 · 山东</h3><p>块面厚重，粗中有细，讲究黑白灰的层次，与当地年画互为表里。</p></div>
+        <div class="split-cell"><h3>佛山 · 广东</h3><p>以铜衬料、铜写料著称，用金箔或铜箔衬底，色彩明亮，多用于节庆与祭祀装饰。</p></div>
+        <div class="split-cell"><h3>乐清 · 浙江</h3><p>细纹刻纸，刀工极细，纹路密如发丝，多用于龙船灯与窗格装饰。</p></div>
+        <div class="split-cell"><h3>庆阳 · 甘肃</h3><p>保留了较多古老纹样与巫术意味的题材，色彩与造型都更原始。</p></div>
+      </div>
+    </article>
+
+    <article class="chapter" id="today">
+      <div class="chapter-index"><b>陆</b><span>TODAY / 当代传承</span></div>
+      <h2>从窗棂到屏幕</h2>
+      <p>2006 年，剪纸列入第一批国家级非物质文化遗产名录；2009 年，中国剪纸列入联合国教科文组织《人类非物质文化遗产代表作名录》。这两件事把一门手艺从「家里的窗花」变成了需要被记录、被教授、被传递的公共文化。</p>
+      <p>但保护从来不只等于「保存」。剪纸真正活着的部分，是它那套「用减法造型」的思路——先想清楚什么要留下，再动手去掉其余的。这套思路今天依然好用：平面设计里的负形、标志设计里的剪影、界面里的留白，说的其实是同一件事。</p>
+      <p>这个工坊做的事很简单：把那把剪刀交到你手上。对称之美用折纸接近传统窗花的秩序，自由剪艺留下一段只属于你的曲线，纹样临摹让你先读懂轮廓再落下第一剪，百纹成画把纹样拆散让你重新组装。剪坏了可以撤销，纸不够可以换一张——这是屏幕能给的、纸给不了的一点宽容。</p>
+    </article>
+
+    <article class="chapter" id="sources">
+      <div class="chapter-index"><b>柒</b><span>SOURCES / 资料来源</span></div>
+      <h2>本文依据</h2>
+      <ul class="source-list">
+        <li>联合国教科文组织：《Chinese paper-cut》，人类非物质文化遗产代表作名录条目（2009 年列入）。<a href="https://ich.unesco.org/en/RL/chinese-paper-cut-00219" target="_blank" rel="noopener noreferrer">ich.unesco.org ↗</a></li>
+        <li>中国非物质文化遗产网 · 中国非物质文化遗产数字博物馆：剪纸项目条目。<a href="https://www.ihchina.cn/" target="_blank" rel="noopener noreferrer">ihchina.cn ↗</a></li>
+        <li>文中技法、流派与纹样说明为对公开常识性资料的综述，未引用受版权保护的图版；页面内所有剪纸图形均为本项目原创绘制。</li>
+      </ul>
+    </article>
+
+    <div class="cta-band">
+      <h2>读到这里，不如自己剪一张</h2>
+      <a class="btn-ghost" href="{% url 'core:modes' %}">进入创作工坊 <span aria-hidden="true">↗</span></a>
+    </div>
+  </div>
+</section>
+{% endblock %}

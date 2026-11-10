@@ -6,3 +6,8 @@ db.sqlite3-journal
 .env
 .qa/
 staticfiles/
+runserver.out.log
+runserver.err.log
+# 素材备份与作废稿，不入库
+core/static/core/media/_bak/
+core/static/core/media/_intro-vp9.webm

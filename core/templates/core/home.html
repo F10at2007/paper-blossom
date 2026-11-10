@@ -1,0 +1,88 @@
+{% extends 'core/base.html' %}{% load static %}
+{% block title %}一纸生花 · 数字剪纸工坊｜让非遗在指尖焕新{% endblock %}
+{% block description %}一纸生花是武汉大学「零杯」网页设计大赛参赛作品，以人类非物质文化遗产「中国剪纸」为灵感的在线剪纸工坊。四种创作方式，2048 像素透明 PNG 导出，作品留在你自己的浏览器里。{% endblock %}
+
+{% block content %}
+{% if request.GET.intro != '0' %}
+<div class="gate" id="gate" aria-label="开场动画" role="region">
+  <div class="gate-inner">
+    <video id="intro-video" class="gate-video" src="{% static 'core/media/intro.mp4' %}" poster="{% static 'core/media/intro-poster.webp' %}" muted playsinline preload="metadata"></video>
+  </div>
+  <div class="gate-controls">
+    <button type="button" class="gate-btn" id="gate-sound" aria-pressed="false">开启声音</button>
+    <button type="button" class="gate-btn gate-skip" id="gate-skip">跳过开场</button>
+  </div>
+</div>
+{% endif %}
+
+<section class="hero-stage" aria-labelledby="hero-title">
+  <div class="stage">
+    <h1 id="hero-title" class="stage-title"><img src="{% static 'core/media/title-brush.webp' %}" alt="一张纸，四种可能" width="2772" height="467" fetchpriority="high" decoding="async"></h1>
+    <p class="stage-sub">选择一种模式，享受你的剪纸时光吧</p>
+
+    <a class="hotspot" style="--l:10.58%;--t:53.98%;--w:16.35%;--h:42.42%" href="{% url 'core:workshop' 'fold' %}" aria-label="进入对称之美工坊：折纸成花">
+      <img class="pop pop-w" data-src="{% static 'core/media/card-symmetry-flat-pop.webp' %}" alt="" aria-hidden="true" width="924" height="1198" decoding="async">
+      <span class="hotspot-tag">进入工坊 ↗</span>
+    </a>
+    <a class="hotspot" style="--l:31.73%;--t:53.98%;--w:16.35%;--h:42.42%" href="{% url 'core:workshop' 'free' %}" aria-label="进入自由剪艺工坊">
+      <img class="pop pop-w pop-free" data-src="{% static 'core/media/card-free-pop.webp' %}" alt="" aria-hidden="true" width="924" height="1198" decoding="async">
+      <span class="hotspot-tag">进入工坊 ↗</span>
+    </a>
+    <a class="hotspot" style="--l:52.76%;--t:53.98%;--w:16.35%;--h:42.42%" href="{% url 'core:workshop' 'trace' %}" aria-label="进入纹样临摹工坊">
+      <img class="pop pop-w pop-trace" data-src="{% static 'core/media/card-trace-pop.webp' %}" alt="" aria-hidden="true" width="924" height="1198" decoding="async">
+      <span class="hotspot-tag">进入工坊 ↗</span>
+    </a>
+    <a class="hotspot" style="--l:73.91%;--t:53.98%;--w:16.35%;--h:42.42%" href="{% url 'core:workshop' 'compose' %}" aria-label="进入百纹成画工坊">
+      <img class="pop pop-w pop-compose" data-src="{% static 'core/media/card-compose-pop.webp' %}" alt="" aria-hidden="true" width="924" height="1198" decoding="async">
+      <span class="hotspot-tag">进入工坊 ↗</span>
+    </a>
+
+    <button type="button" class="replay-link" id="gate-replay" aria-label="重看开场动画">▶ 重看开场</button>
+    <a class="scroll-cue" href="#heritage-band" aria-label="向下阅读非遗剪纸介绍">向下，读懂这把剪刀 ↓</a>
+  </div>
+</section>
+
+<section class="mobile-modes" aria-label="四种创作方式">
+  <h2 class="mm-title">一张纸，四种可能</h2>
+  <div class="mm-grid">
+    {% for mode in modes %}
+    <a class="mm-card" href="{% url 'core:workshop' mode.slug %}">
+      <img src="{% static 'core/media/' %}card-{% if mode.slug == 'fold' %}symmetry{% elif mode.slug == 'free' %}free{% elif mode.slug == 'trace' %}trace{% else %}compose{% endif %}.webp" alt="{{ mode.name }}剪纸示意" loading="lazy" decoding="async">
+      <span>{{ mode.name }}</span>
+      <small>{{ mode.tag }}</small>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="heritage-band" id="heritage-band" aria-labelledby="heritage-title">
+  <p class="band-label"><i aria-hidden="true"></i>非遗剪纸介绍</p>
+  <div class="heritage-card">
+    <div class="heritage-figure">
+      <img src="{% static 'core/media/heritage-flower.webp' %}" alt="原创剪纸纹样：牡丹、梅枝、喜鹊与祥云组成的团花" width="1008" height="1008" loading="lazy">
+      <span class="figure-seal" aria-hidden="true">纸间<br>生花</span>
+    </div>
+    <div class="heritage-copy">
+      <p class="eyebrow">OLD CRAFT, NEW STORIES / 纸短情长</p>
+      <h2 id="heritage-title">让老手艺，长出新的故事</h2>
+      <p>一把剪刀，一张红纸。花鸟、草木与心愿，化作虚实相生的纹样。剪纸的动人之处，藏在手与纸的对话里，也藏在每个人对生活的想象里。</p>
+      <p>我们把这份质朴的创作乐趣带到屏幕上：让传统成为灵感，让每一次尝试，都成为属于你的表达。</p>
+      <p class="heritage-source">中国剪纸于 2009 年列入联合国教科文组织《人类非物质文化遗产代表作名录》。</p>
+      <div class="heritage-actions">
+        <a class="btn-ghost" href="{% url 'core:heritage' %}">点击获取相关资料 <span aria-hidden="true">↗</span></a>
+        <a class="btn-ghost" href="{% url 'core:modes' %}">点击进入工作坊 <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_head %}
+<link rel="preload" as="image" href="{% static 'core/media/bg-stage-1920.webp' %}" media="(min-width: 1680px)">
+<link rel="preload" as="image" href="{% static 'core/media/bg-stage-1440.webp' %}" media="(min-width: 1081px) and (max-width: 1679px)">
+<link rel="preload" as="image" href="{% static 'core/media/bg-stage-1080.webp' %}" media="(min-width: 761px) and (max-width: 1080px)">
+<link rel="preload" as="image" href="{% static 'core/media/bg-stage-720.webp' %}" media="(max-width: 760px)">
+<script type="module" src="{% static 'core/js/intro-gate.js' %}"></script>
+<script defer src="{% static 'core/js/pop-defer.js' %}"></script>
+{% endblock %}
