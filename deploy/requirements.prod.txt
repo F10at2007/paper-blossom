@@ -1,0 +1,2 @@
+# 生产运行额外依赖（requirements.txt 保持竞赛版本不变）
+gunicorn==23.0.0

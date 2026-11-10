@@ -1,0 +1,42 @@
+# 一纸生花 · 一键部署（仅公网 IP + HTTP）
+#   cp .env.example .env && vim .env      # 填 SECRET_KEY 与公网 IP
+#   docker compose up -d --build
+#   docker compose logs -f
+
+services:
+  web:
+    build:
+      context: .
+      target: web
+      args:
+        PIP_INDEX_URL: ${PIP_INDEX_URL:-https://mirrors.cloud.tencent.com/pypi/simple}
+        PIP_TRUSTED_HOST: ${PIP_TRUSTED_HOST:-mirrors.cloud.tencent.com}
+    image: paper-blossoms/web:latest
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings_prod
+      DJANGO_SECRET_KEY: "${DJANGO_SECRET_KEY:?DJANGO_SECRET_KEY is required in .env}"
+      DJANGO_ALLOWED_HOSTS: "${DJANGO_ALLOWED_HOSTS:?DJANGO_ALLOWED_HOSTS is required in .env}"
+      DJANGO_CSRF_ORIGINS: "${DJANGO_CSRF_ORIGINS:-}"
+      DJANGO_SECURE_SSL: "${DJANGO_SECURE_SSL:-0}"
+    expose:
+      - "8000"
+    restart: unless-stopped
+    healthcheck:
+      # 用 TCP 探测，避免 healthcheck 的 Host 头被 ALLOWED_HOSTS 拦截
+      test: ["CMD-SHELL", "python -c \"import socket,sys; s=socket.socket(); s.settimeout(2); sys.exit(0 if s.connect_ex(('127.0.0.1',8000))==0 else 1)\""]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  nginx:
+    build:
+      context: .
+      target: static
+    image: paper-blossoms/nginx:latest
+    ports:
+      - "80:80"
+    depends_on:
+      web:
+        condition: service_healthy
+    restart: unless-stopped

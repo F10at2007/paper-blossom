@@ -1,0 +1,142 @@
+/* ==========================================================================
+   布局与适配修补层
+   在 site.css / *-workshop.css / warm.css 之后加载，只覆盖表现：
+   栅格、层叠、间距、可读性与点击区。不改 DOM、脚本、绘制或保存逻辑。
+   ========================================================================== */
+
+/* 1) 工作台三栏断点冲突
+   旧 site.css 在 <=1100px 把 .preview-panel 设成「跨整行 + flex-wrap:wrap +
+   align-items:center」，与暖棕版的 column 方向叠加后，子元素会折成横向多列，
+   把「保存 / 下载 / 预览」等控件推到画布右侧，再被 .workspace 的
+   overflow:hidden 裁掉。这里恢复单列纵向排布并回到第三栏。 */
+@media (max-width: 1100px) {
+  .workspace .preview-panel {
+    grid-column: auto;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 0;
+  }
+  .workspace .preview-panel > .panel-heading { margin-bottom: 16px; }
+  .workspace .preview-panel > .button { width: 100%; }
+  .workspace .preview-panel > .preview-art {
+    width: 100%;
+    max-width: 220px;
+    margin-inline: auto;
+  }
+  .workspace .preview-panel > .preview-caption { margin: 12px 0 4px; }
+}
+
+/* 2) 堆叠态内容宽度
+   721–900px 保持项目原有的「画布 → 工具 → 预览」顺序（warm.css 已定义），
+   不在此覆盖 order：把工具面板排到画布前面会把画布挤出首屏，看起来像画布打不开。
+   仅把面板内容收进一条舒适宽度，避免按钮横跨整个屏幕。 */
+@media (max-width: 900px) {
+  .workspace .workspace-toolbar,
+  .workspace .preview-panel { padding-inline: clamp(18px, 4vw, 36px); }
+
+  .workspace .workspace-toolbar > *,
+  .workspace .preview-panel > * {
+    width: 100%;
+    max-width: 640px;
+    margin-inline: auto;
+  }
+  .workspace .preview-panel > .preview-art { max-width: 220px; }
+  .workspace .workspace-toolbar > .motif-library,
+  .workspace .workspace-toolbar > .category-tabs { max-width: 480px; }
+
+  .workspace:not(.is-focused) .preview-panel .preview-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    margin-inline: auto;
+  }
+  .workspace:not(.is-focused) .preview-panel .preview-actions .button { width: 100%; }
+}
+
+/* <=720px 沿用项目原有的 display:block 与 DOM 顺序（工具 → 画布 → 预览），
+   不改成 grid：改成 grid 会让 <=900px 的 order 规则连带生效，改变手机端既有顺序。 */
+
+/* 3) 首页：滚动提示与四张卡热区的层叠
+   提示原本压在热区下沿并抢走点击；下移到背景图最底部留白，且热区优先响应。 */
+.hotspot { z-index: 2; }
+.scroll-cue {
+  bottom: .25%;
+  z-index: 1;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: rgba(52, 24, 16, .3);
+}
+
+/* 4) 小屏导航：overflow-x:auto 会派生出 overflow-y:auto，
+   内容比可视高度多 2px 就出现带上下箭头的竖向滚动条。显式关掉纵轴。 */
+@media (max-width: 900px) {
+  .site-nav {
+    overflow-y: hidden;
+    padding-block: 2px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(201, 161, 91, .5) transparent;
+  }
+  .site-nav::-webkit-scrollbar { height: 4px; }
+  .site-nav::-webkit-scrollbar-track { background: transparent; }
+  .site-nav::-webkit-scrollbar-thumb { background: rgba(201, 161, 91, .5); border-radius: 4px; }
+}
+
+/* 横屏矮视口：导航不再折成第二行，给内容留出高度。 */
+@media (max-width: 900px) and (max-height: 520px) {
+  .site-head { flex-wrap: nowrap; padding: 8px 16px; }
+  .site-head .site-nav {
+    order: 0;
+    width: auto;
+    max-width: calc(100vw - 210px);
+    gap: 14px;
+  }
+  .site-brand .brand-text { font-size: 18px; }
+  .site-seal { display: none; }
+}
+
+/* 5) 侧栏文字对比度：在氛围图上加一层极薄的纸色，保留原图纹理。 */
+.workspace-toolbar,
+.preview-panel { position: relative; }
+.workspace-toolbar::before,
+.preview-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(253, 250, 244, .18);
+  pointer-events: none;
+  z-index: 0;
+}
+.workspace-toolbar > *,
+.preview-panel > * { position: relative; z-index: 1; }
+
+/* 6) 触屏点击区 */
+.site-nav a { padding-block: 10px; }
+.footer-nav a { padding: 8px 2px; }
+.back-link { padding: 8px 0; }
+.saved-actions a,
+.saved-actions button { padding: 8px 2px; min-width: 34px; font-size: 12px; }
+.heritage-page .source-list a { display: inline-block; padding: 6px 2px; }
+.history-actions button { min-width: 36px; padding: 6px 10px; }
+.swatches,
+.free-paper-options .swatches { gap: 10px; }
+.swatch { width: 32px; height: 32px; }
+
+/* 7) 小字号可读性（保留装饰性英文副标题的层级） */
+.footer .footer-meta,
+.footer-meta span { font-size: 11px; }
+.site-brand .brand-text small { font-size: 9px; }
+.mm-card small { font-size: 11px; }
+.panel-heading > span { font-size: 10px; }
+.fold-choices button small { font-size: 10px; }
+.canvas-bottom span { font-size: 10px; }
+.motif-library span { font-size: 10px; }
+.tool-tip p { font-size: 11px; }
+.preview-caption,
+.placeholder-note,
+.fold-result-note { font-size: 11.5px; }
+
+/* 8) 窄屏模式页：两列时卡片文字被挤成两三字一行，改为单列。 */
+@media (max-width: 560px) {
+  .modes-page .mode-grid { grid-template-columns: minmax(0, 1fr); gap: 30px; }
+  .modes-page .mode-art,
+  .modes-page .mode-copy { max-width: 420px; margin-inline: auto; }
+}

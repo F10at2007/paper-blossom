@@ -1,6 +1,9 @@
 {% load static %}
 <article class="mode-card rod-{{ mode.slug }}">
   <a class="mode-art" href="{% url 'core:workshop' mode.slug %}" aria-label="进入{{ mode.name }}工作台">
+    {% if workbench_images %}
+    <img class="workbench-scroll" src="{% static 'core/media/workbench-' %}{{ mode.art }}.png" alt="{{ mode.name }}卷轴" width="1344" height="1792">
+    {% else %}
     <span class="scroll-rod scroll-rod-top" aria-hidden="true"></span>
     <span class="scroll-paper">
       <span class="art-number">{{ mode.number }}</span>
@@ -8,6 +11,7 @@
       <span class="paper-seal" aria-hidden="true">{{ mode.seal }}</span>
     </span>
     <span class="scroll-rod scroll-rod-bottom" aria-hidden="true"></span>
+    {% endif %}
   </a>
   <div class="mode-copy">
     <span class="eyebrow">MODE / {{ mode.number }} · {{ mode.tag }}</span>

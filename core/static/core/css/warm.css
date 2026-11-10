@@ -1195,6 +1195,10 @@ body.gate-open {
 
 .mode-art:hover { transform: translateY(-5px); }
 
+.modes-page .mode-art { padding: 0; background: transparent; aspect-ratio: auto; }
+.modes-page .mode-art .workbench-scroll { display: block; width: 100%; max-height: none; height: auto; object-fit: contain; filter: none; }
+.modes-page .mode-art:hover .workbench-scroll { transform: none; }
+
 .scroll-rod {
   position: relative;
   z-index: 2;

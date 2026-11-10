@@ -1,0 +1,25 @@
+# 构建上下文排除项：减小体积、避免把本地状态与密钥打进镜像
+.git
+.gitignore
+.venv
+venv
+.qa
+.workbuddy
+__pycache__
+*.py[cod]
+*.pyo
+db.sqlite3
+db.sqlite3-journal
+.env
+.env.*
+!.env.example
+staticfiles/
+docs/
+tests/
+*.md
+*.log
+runserver.out.log
+runserver.err.log
+# 素材备份与作废稿
+core/static/core/media/_bak/
+core/static/core/media/_intro-vp9.webm
