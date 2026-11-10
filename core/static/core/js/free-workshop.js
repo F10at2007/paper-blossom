@@ -1,6 +1,6 @@
 import { CutHistory, PAPER_COLORS, traceCut, renderPaper } from './free-paper.js';
 import { createPaperDownloader } from './paper-download.js';
-import { FoldSession, FOLDS, clipFold, foldView, toFoldView, fromFoldView } from './fold-paper.js';
+import { FoldSession, FOLDS, clipFold, foldView, toFoldView, mapFoldView, fromFoldView } from './fold-paper.js';
 import { renderFoldPaper } from './fold-render.js';
 import { attachPersistence } from './work-persistence.js';
 
@@ -116,7 +116,8 @@ export function mountWorkshop(root, extension = {}) {
     frame = null;
     overlay.clearRect(0, 0, drawing.width, drawing.height);
     if (!stroke) return;
-    const points = fold ? stroke.points.map(p=>toFoldView(p,fold.mode)) : stroke.points;
+    const view = fold ? foldView(fold.mode) : null;
+    const points = fold ? stroke.points.map(p=>mapFoldView(p,view)) : stroke.points;
     const pixel = drawing.width / drawing.getBoundingClientRect().width;
     overlay.save();
     traceCut(overlay, points, drawing.width, drawing.height);
@@ -268,7 +269,7 @@ export function mountWorkshop(root, extension = {}) {
     announce('正在生成 2048 × 2048 透明底 PNG…');
     try {
       const filename=root.dataset.mode==='trace'?'一纸生花_纹样临摹.png':fold?'一纸生花_对称之美.png':'一纸生花_自由剪艺.png';
-      await downloader.download(finalPaths(),color,filename,fold?.finalGroups,fold?renderFinal:null);
+      await downloader.download(fold?null:finalPaths(),color,filename,null,fold?renderFinal:null);
       announce('PNG 已生成并交给浏览器下载，请在下载列表中查看。');
     } catch (error) {
       announce(`下载失败：${error.message || '请检查浏览器下载设置后重试。'}`);

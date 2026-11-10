@@ -58,6 +58,8 @@ if(root){
   });
   root.querySelector('[data-action="toggle-guide"]').addEventListener('click',event=>{
     guideVisible=!guideVisible;event.currentTarget.setAttribute('aria-pressed',String(guideVisible));event.currentTarget.textContent=guideVisible?'隐藏画布虚线':'显示画布虚线';drawReferenceGuide();
+    const tools=root.querySelector('[data-tool-disclosure]');
+    if(tools&&matchMedia('(max-width: 760px)').matches){tools.open=false;root.querySelector('#drawing-canvas').focus({preventScroll:true});}
   });
   const observer=new ResizeObserver(drawReferenceGuide);observer.observe(guide);
   window.addEventListener('pagehide',event=>{if(!event.persisted)observer.disconnect();});

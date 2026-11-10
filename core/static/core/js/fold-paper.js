@@ -54,6 +54,10 @@ export function foldView(mode) {
 
 export function toFoldView(point, mode) {
   const view=foldView(mode);
+  return mapFoldView(point,view);
+}
+
+export function mapFoldView(point, view) {
   return {x:point.x*view.scale+view.x,y:point.y*view.scale+view.y};
 }
 
@@ -105,6 +109,11 @@ export function unfoldPaths(paths, mode) {
   }));
 }
 
+function unfoldPathGroups(paths, mode) {
+  const groups=paths.map(points => unfoldPaths([points],mode));
+  return {groups,paths:groups.flat()};
+}
+
 /** Fold type belongs to the session. Switching resets both history branches. */
 export class FoldSession {
   constructor(history = new CutHistory()) { this.history=history; }
@@ -118,6 +127,7 @@ export class FoldSession {
   }
   get finalPaths() { return unfoldPaths(this.history.paths,this.mode); }
   get finalGroups() { return this.history.paths.map(points => unfoldPaths([points],this.mode)); }
+  get finalGeometry() { return unfoldPathGroups(this.history.paths,this.mode); }
   get definition() { return FOLDS[this.mode]; }
   get operations() {
     return this.history.paths.map(points => ({ type:'polygon',fold:this.mode,points }));

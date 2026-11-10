@@ -4,6 +4,7 @@ import { PAPER_COLORS,traceCut } from './free-paper.js';
 import { CompositionHistory,renderComposition } from './composition-model.js';
 import { createPaperDownloader } from './paper-download.js';
 import { attachPersistence } from './work-persistence.js';
+import { createCompatibleId } from './compatible-id.js';
 
 const root=document.querySelector('#compose-workspace');
 if(root){
@@ -37,7 +38,9 @@ if(root){
   function add(motif){
     if(drag)return;
     if(model.objects.length>=80){notify('每幅作品最多 80 个元素，请先删除部分纹样。');return;}
-    const object={id:crypto.randomUUID(),motif,x:.5,y:.5,size:.34,rotation:0};selected=object.id;model.commit([...model.objects,object]);redraw();notify('已添加纹样。拖动矩形框内部移动，拖动四角等比缩放。');
+    const object={id:createCompatibleId(),motif,x:.5,y:.5,size:.34,rotation:0};selected=object.id;model.commit([...model.objects,object]);redraw();notify('已添加纹样。拖动矩形框内部移动，拖动四角等比缩放。');
+    const disclosure=root.querySelector('[data-tool-disclosure]');
+    if(disclosure&&matchMedia('(max-width: 760px)').matches){disclosure.open=false;input.focus({preventScroll:true});}
   }
   function library(category){
     const container=root.querySelector('#motif-library');container.replaceChildren();
@@ -49,7 +52,7 @@ if(root){
     }
     for(const tab of root.querySelectorAll('[data-category]'))tab.setAttribute('aria-pressed',String(tab.dataset.category===category));
   }
-  for(const tab of root.querySelectorAll('[data-category]'))on(tab,'click',()=>library(tab.dataset.category));
+  for(const tab of root.querySelectorAll('[data-category]'))on(tab,'click',()=>{library(tab.dataset.category);root.querySelector('[data-tool-summary]').textContent=`添加纹样 · ${tab.dataset.category}`;});
   function finish(commit){
     if(!drag)return;const ended=drag,after=structuredClone(model.objects);drag=null;
     if(input.hasPointerCapture(ended.pointer))input.releasePointerCapture(ended.pointer);
@@ -88,7 +91,7 @@ if(root){
   on(button('rotate-right'),'click',()=>modify(o=>o.rotation=(o.rotation+15)%360));
   on(button('delete'),'click',()=>{model.commit(model.objects.filter(o=>o.id!==selected));selected=null;redraw();notify('已删除选中元素，可撤销恢复。');});
   on(button('deselect'),'click',()=>{selected=null;redraw();});
-  on(button('duplicate'),'click',()=>{if(model.objects.length>=80){notify('每幅作品最多 80 个元素。');return;}const o={...current(),id:crypto.randomUUID(),x:Math.min(.95,current().x+.04),y:Math.min(.95,current().y+.04)};selected=o.id;model.commit([...model.objects,o]);redraw();});
+  on(button('duplicate'),'click',()=>{if(model.objects.length>=80){notify('每幅作品最多 80 个元素。');return;}const o={...current(),id:createCompatibleId(),x:Math.min(.95,current().x+.04),y:Math.min(.95,current().y+.04)};selected=o.id;model.commit([...model.objects,o]);redraw();});
   on(button('undo'),'click',()=>{model.undo();redraw();});on(button('redo'),'click',()=>{model.redo();redraw();});
   on(button('clear'),'click',()=>{if(window.confirm('清空全部拼接元素？可以撤销恢复。')){model.clear();selected=null;redraw();}});
   for(const swatch of root.querySelectorAll('[data-color]'))on(swatch,'click',()=>{color=swatch.dataset.color;for(const item of root.querySelectorAll('[data-color]'))item.setAttribute('aria-pressed',String(item===swatch));root.querySelector('#paper-color-name').textContent=swatch.getAttribute('aria-label');redraw();});

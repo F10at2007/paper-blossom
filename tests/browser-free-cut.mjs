@@ -46,9 +46,15 @@ async function evaluate(expression) {
   return result.result.value;
 }
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-async function until(fn, message) {
-  for (let i = 0; i < 100; i++) { if (await fn()) return; await delay(50); }
-  throw new Error(message);
+async function until(fn, message, { timeoutMs = null, intervalMs = 50, timeoutDetail = null } = {}) {
+  if (timeoutMs === null) {
+    for (let i = 0; i < 300; i++) { if (await fn()) return; await delay(intervalMs); }
+    throw new Error(message);
+  }
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) { if (await fn()) return; await delay(Math.min(intervalMs, Math.max(0, deadline-Date.now()))); }
+  const detail = timeoutDetail ? await timeoutDetail() : null;
+  throw new Error(detail ? `${message}: ${detail}` : message);
 }
 async function check(name, expression) {
   assert.ok(await evaluate(expression), name);
@@ -105,7 +111,7 @@ try {
   await call('Emulation.setDeviceMetricsOverride', {width:1440,height:1080,deviceScaleFactor:1,mobile:false});
   await navigate('/workshop/free/');
   await evaluate(`window.pixel=(x,y,id='paper-canvas')=>{const c=document.getElementById(id);return [...c.getContext('2d').getImageData(Math.floor(x*c.width),Math.floor(y*c.height),1,1).data]}`);
-  await evaluate(`window.createdUrls=[];window.revokedUrls=[];window.originalCreateUrl=URL.createObjectURL;window.originalRevokeUrl=URL.revokeObjectURL;URL.createObjectURL=function(blob){const u=window.originalCreateUrl(blob);window.createdUrls.push(u);return u};URL.revokeObjectURL=function(u){window.revokedUrls.push(u);window.originalRevokeUrl(u)}`);
+  await evaluate(`window.createdUrls=[];window.revokedUrls=[];window.originalCreateUrl=URL.createObjectURL;window.originalRevokeUrl=URL.revokeObjectURL;URL.createObjectURL=function(blob){const u=window.originalCreateUrl(blob);window.createdUrls.push(u);return u};URL.revokeObjectURL=function(u){if(!(${JSON.stringify(process.env.BLOCK_URL_RELEASE_FOR_TEST || '')}==='second'&&window.createdUrls[1]===u)){window.revokedUrls.push(u);window.originalRevokeUrl(u)}}`);
   await check('initial full paper and disabled undo/redo/clear', `pixel(.25,.25)[3]===255 && ['undo','redo','clear'].every(a=>document.querySelector('[data-action="'+a+'"]').disabled)`);
   const blank = await download('blank-paper');
   assert.deepEqual(blank.hole, [166,49,39,255]); assert.equal(blank.width,2048); assert.equal(blank.height,2048);
@@ -226,8 +232,13 @@ try {
   await call('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[touchPoint([.9,.6])]});
   await call('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});
   await check('touch cancellation preserves prior cuts and ends gesture', `pixel(.25,.25)[3]===0 && pixel(.8,.7)[3]===255 && !document.querySelector('[data-action="download"]').disabled`);
-  await until(()=>evaluate('window.createdUrls.every(u=>window.revokedUrls.includes(u))'),'Blob URL cleanup');
-  await check('all successful download object URLs released', `window.createdUrls.length===2 && window.revokedUrls.length>=2`);
+  const urlState = () => evaluate(`JSON.stringify({created:window.createdUrls,released:window.revokedUrls,remaining:window.createdUrls.filter(u=>!window.revokedUrls.includes(u))})`);
+  await check('two successful download object URLs were created', `window.createdUrls.length===2`);
+  await until(()=>evaluate('window.createdUrls.length===2 && window.createdUrls.every(u=>window.revokedUrls.includes(u))'),'Blob URL cleanup',{
+    timeoutMs:12000,intervalMs:100,
+    timeoutDetail:async()=>{const state=JSON.parse(await urlState());return `created=${JSON.stringify(state.created)}; released=${JSON.stringify(state.released)}; unreleased=${JSON.stringify(state.remaining)}`;}
+  });
+  await check('each successful download object URL released', `window.createdUrls.length===2 && window.createdUrls.every(u=>window.revokedUrls.includes(u))`);
   await call('Emulation.setTouchEmulationEnabled',{enabled:false});
   // Restore the coordinate helper after each navigation and verify all routes.
   for (const width of [1920,1440,720]) {

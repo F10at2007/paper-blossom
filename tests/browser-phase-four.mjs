@@ -31,7 +31,7 @@ socket.addEventListener('message', event => {
     if (m.error) p.reject(new Error(JSON.stringify(m.error))); else p.resolve(m.result);
   }
   if (m.method === 'Runtime.exceptionThrown') errors.push(m.params.exceptionDetails);
-  if (m.method === 'Log.entryAdded' && m.params.entry.level === 'error') errors.push(m.params.entry);
+  if (m.method === 'Log.entryAdded' && m.params.entry.level === 'error' && !m.params.entry.text.startsWith('The Cross-Origin-Opener-Policy header has been ignored, because the URL\'s origin was untrustworthy.')) errors.push(m.params.entry);
   if (m.method === 'Browser.downloadWillBegin') downloads.push(m.params);
   if (m.method === 'Browser.downloadProgress' && m.params.state === 'completed') completedDownloads.add(m.params.guid);
   if (m.method === 'Page.javascriptDialogOpening' && m.params.type === 'beforeunload') { call('Page.handleJavaScriptDialog',{accept:true}); return; }

@@ -208,11 +208,13 @@ body.gate-open .scroll-cue {
 .gate-skip {
   opacity: 0;
   pointer-events: none;
+  visibility: hidden;
 }
 
 .gate-skip.is-visible {
   opacity: 1;
   pointer-events: auto;
+  visibility: visible;
 }
 
 body.gate-open {
@@ -245,10 +247,6 @@ body.gate-open {
 
 @media (max-width: 1080px) {
   .stage { background-image: url("../media/bg-stage-1080.webp"), url("../media/bg-stage-1080-lq.webp"); }
-}
-
-@media (max-width: 760px) {
-  .stage { background-image: url("../media/bg-stage-720.webp"), url("../media/bg-stage-720-lq.webp"); }
 }
 
 .stage-title {

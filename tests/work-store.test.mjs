@@ -30,7 +30,40 @@ test('corrupt records and incompatible versions are not overwritten',()=>{
   }
 });
 test('invalid geometry, reference IDs, colours and malicious mode keys rejected',()=>{
-  for(const document of [{...documents[0],mode:'__proto__'},{...documents[0],color:'url(x)'},{...documents[0],paths:[[{x:NaN,y:0}]]},{...documents[1],foldMode:'unknown'},{...documents[1],paths:[[{x:.9,y:.1},{x:.8,y:.1},{x:.9,y:.2}]]},{...documents[2],referenceId:'bad'},{...documents[3],objects:[{...documents[3].objects[0],motif:'bad'}]}])assert.throws(()=>validateDocument(document));
+  for(const document of [{...documents[0],mode:'__proto__'},{...documents[0],mode:['free']},{...documents[0],color:'url(x)'},{...documents[0],paths:[[{x:NaN,y:0}]]},{...documents[1],foldMode:'unknown'},{...documents[1],foldMode:['quarter']},{...documents[1],paths:[[{x:.9,y:.1},{x:.8,y:.1},{x:.9,y:.2}]]},{...documents[2],referenceId:'bad'},{...documents[3],objects:[{...documents[3].objects[0],motif:'bad'}]}])assert.throws(()=>validateDocument(document));
+});
+test('all four modes and legacy folds round-trip, remain editable and save again',()=>{
+  const storage=memory();
+  const oldFolds=['vertical','horizontal','quarter','eighth','radial3','radial6'];
+  for(const [i,document] of [...documents,...oldFolds.map(foldMode=>({...documents[1],foldMode,paths:[]}))].entries()){
+    const saved=saveWork({name:`old ${i}`,document,thumbnail:thumb},storage);
+    const restored=readWorks(storage).find(w=>w.id===saved.id).document;
+    assert.deepEqual(restored,document);
+    const changed={...restored,color:'#292923'};
+    saveWork({...saved,document:changed,expectedVersion:workVersion(saved)},storage);
+    assert.equal(readWorks(storage).find(w=>w.id===saved.id).document.color,'#292923');
+  }
+  assert.doesNotThrow(()=>validateDocument({...documents[0],paths:[]}));
+  assert.doesNotThrow(()=>validateDocument({...documents[1],paths:[],foldMode:'eighth'}));
+});
+test('backup validation rejects malformed final records with exact work and field; never partially imports',()=>{
+  const valid=documents.map((document,i)=>({id:`work-${i}`,name:`作品 ${i+1}`,document,thumbnail:thumb,createdAt:'2026-01-01T00:00:00.000Z',updatedAt:'2026-01-01T00:00:00.000Z'}));
+  const old=JSON.stringify({version:1,works:[valid[0]]}),storage=memory();storage.setItem(STORAGE_KEY,old);
+  const badDocuments=[
+    {...documents[0],mode:['free']},
+    {...documents[1],foldMode:['quarter']},
+    {...documents[3],objects:[{...documents[3].objects[0],motif:'missing'}]},
+    {...documents[2],referenceId:'missing'},
+    {...documents[0],paths:[[{x:.1,y:.1},{x:.2,y:.2}]]},
+  ];
+  for(const document of badDocuments){
+    const backup={version:1,works:[...valid,{...valid.at(-1),id:'work-5',document}]};
+    assert.throws(()=>readWorks({getItem:()=>JSON.stringify(backup)}),/第 5 幅作品.*(mode|foldMode|motif|referenceId|paths)/);
+    assert.equal(storage.getItem(STORAGE_KEY),old);
+  }
+  const last={...valid.at(-1),id:'last-corrupt',document:{...documents[3],objects:[{...documents[3].objects[0],x:undefined}]}};
+  assert.throws(()=>readWorks({getItem:()=>JSON.stringify({version:1,works:[...valid.slice(0,-1),last]})}),/第 4 幅作品.*objects\[0\]\.x/);
+  assert.equal(storage.getItem(STORAGE_KEY),old);
 });
 test('quota and security failures keep previous data, limits are enforced',()=>{
   const storage=memory();saveWork({name:'old',document:documents[0],thumbnail:thumb},storage);

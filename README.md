@@ -26,7 +26,7 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-访问 http://127.0.0.1:8000/ 。已有依赖时可省略安装；数据库迁移沿用原项目，仅供既有 Django 配置使用，用户作品不写入数据库。
+比赛电脑本机演示可访问 http://localhost:8000/（或 http://127.0.0.1:8000/）。手机/评委设备通过局域网访问时，在服务电脑设置 `DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,192.168.1.20`（将示例 IP 换成本机局域网 IPv4），再运行 `python manage.py runserver 0.0.0.0:8000`，设备访问 `http://实际局域网IP:8000/`；还需允许防火墙入站 TCP 8000。比赛现场实际地址待确认。HTTPS 域名、证书和反向代理尚未配置，实际 HTTPS 地址待确认。已有依赖时可省略安装；数据库迁移沿用原项目，仅供既有 Django 配置使用，用户作品不写入数据库。
 
 全新机器请先安装 Python 3.12 或兼容版本，并运行 `python -m venv .venv` 创建环境。更新代码后，已打开的旧页面可按 Ctrl+F5 刷新脚本缓存。
 
@@ -138,6 +138,8 @@ node tests/browser-radial-cut.mjs
 node tests/browser-composition-box.mjs
 ```
 
+本轮备份导入与首页资源验收：Chrome for Testing 129 使用独立临时配置和同一端口。启动测试服务器后，先运行 `node tests/browser-import-and-home.mjs`，再运行上方完整回归。该专项会实测移动/桌面冷启动网络请求、跨断点补载、作品页真实文件输入及隔离 localStorage；报告写入忽略目录 `.qa/`。详见 [备份校验与首页资源加载验收](docs/backup-validation-and-home-assets-2026-11-10.md)。
+
 当前结果：单元测试 24/24，`fold-cut` 41 项、`free-cut` 59 项、`radial-cut` 46 项、`composition-box` 24 项、`refinements` 46 项、`phase-four` 74 项，全部通过且无页面报错。
 
 脚本基于 Node 内置 WebSocket 和 Chrome DevTools Protocol，无 npm 依赖。不要对日常浏览器配置运行验收。第四阶段脚本仅在隔离测试浏览器中写入验收作品，并在结束时恢复测试前的作品记录。截图、下载与报告位于忽略目录 `.qa/`，不会随源码提交。
@@ -155,6 +157,8 @@ node tests/browser-composition-box.mjs
 移动和缩放每次松手只记一次历史，窗口失焦、触控取消或画布尺寸变化会撤回未完成操作。原有旋转按钮、保存恢复、撤销重做、预览和 PNG 保持可用。选框和控制点只绘制在辅助画布中。
 
 新增验收：`node --test tests/composition-box.test.mjs`；启动独立测试浏览器后运行 `node tests/browser-composition-box.mjs`。详见 [矩形选框验收记录](docs/composition-box.md)。
+
+首页门厅与比赛地址兼容性验收（Chrome 129、localhost/回环/普通 HTTP 局域网 IP）的可复现步骤、运行结果和现场待办见 [比赛访问与首页门厅验收](docs/competition-access-compatibility-2026-11-10.md)。
 
 ## 三折、六折团花
 

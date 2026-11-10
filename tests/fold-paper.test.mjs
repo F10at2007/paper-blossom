@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { FoldSession, FOLDS, clipFold, inFold, unfoldPaths, toFoldView, fromFoldView } from '../core/static/core/js/fold-paper.js';
+import { FoldSession, FOLDS, clipFold, inFold, unfoldPaths, toFoldView, fromFoldView, foldView, mapFoldView } from '../core/static/core/js/fold-paper.js';
 import { validCut } from '../core/static/core/js/free-paper.js';
 const triangle=[{x:.1,y:.1},{x:.3,y:.1},{x:.2,y:.3}];
 const area=points=>Math.abs(points.reduce((s,p,i)=>{const q=points[(i+1)%points.length];return s+p.x*q.y-q.x*p.y;},0)/2);
@@ -71,6 +71,20 @@ test('session reuses base cut history; unfolding never appends derived copies',(
   session.history.undo(); session.select('eighth');
   assert.equal(session.history.paths.length+session.history.future.length,0);
   assert.throws(()=>session.select('unknown'));
+});
+
+test('final geometry shares each expanded cut between flat paths and grouped knockout data',()=>{
+  const session=new FoldSession();session.select('radial6');
+  session.history.paths=[triangle,triangle.map(p=>({x:1-p.x,y:p.y}))];
+  const final=session.finalGeometry;
+  assert.deepEqual(final.groups,session.finalGroups);
+  assert.deepEqual(final.paths,session.finalPaths);
+  assert.equal(final.paths.length,24);
+  assert.equal(final.groups.length,2);
+  assert.ok(final.groups.every(group=>group.length===12));
+  for(const [i,group] of final.groups.entries())for(const copy of group)assert.ok(final.paths.includes(copy),`path ${i} should be shared with grouped output`);
+  const view=foldView('radial6'),point={x:.2,y:.7};
+  assert.deepEqual(mapFoldView(point,view),toFoldView(point,'radial6'));
 });
 
 for(const [mode,n] of [['radial3',3],['radial6',6]]) {

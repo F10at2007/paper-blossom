@@ -41,3 +41,10 @@ class WorkshopPagesTests(TestCase):
         self.assertContains(response,'id="works-empty"')
         self.assertContains(response,'js/my-works.js')
         self.assertNotContains(response,'布局示例 · 非真实作品')
+
+    def test_home_desktop_resources_follow_stage_breakpoint(self):
+        response = self.client.get(reverse('core:index'))
+        self.assertContains(response, 'media="(min-width: 901px) and (max-width: 1080px)"')
+        self.assertNotContains(response, 'bg-stage-720.webp')
+        self.assertContains(response, 'js/pop-defer.js')
+        self.assertContains(response, 'data-src="/static/core/media/card-free-pop.webp"')

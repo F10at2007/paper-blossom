@@ -4,7 +4,7 @@
 
 {% block content %}
 {% if request.GET.intro != '0' %}
-<div class="gate" id="gate" aria-label="开场动画" role="region">
+<div class="gate" id="gate" aria-label="开场动画" role="region" hidden>
   <div class="gate-inner">
     <video id="intro-video" class="gate-video" src="{% static 'core/media/intro.mp4' %}" poster="{% static 'core/media/intro-poster.webp' %}" muted playsinline preload="metadata"></video>
   </div>
@@ -17,7 +17,7 @@
 
 <section class="hero-stage" aria-labelledby="hero-title">
   <div class="stage">
-    <h1 id="hero-title" class="stage-title"><img src="{% static 'core/media/title-brush.webp' %}" alt="一张纸，四种可能" width="2772" height="467" fetchpriority="high" decoding="async"></h1>
+    <h1 id="hero-title" class="stage-title"><img data-src="{% static 'core/media/title-brush.webp' %}" alt="一张纸，四种可能" width="2772" height="467" fetchpriority="high" decoding="async"></h1>
     <p class="stage-sub">选择一种模式，享受你的剪纸时光吧</p>
 
     <a class="hotspot" style="--l:10.58%;--t:53.98%;--w:16.35%;--h:42.42%" href="{% url 'core:workshop' 'fold' %}" aria-label="进入对称之美工坊：折纸成花">
@@ -37,7 +37,7 @@
       <span class="hotspot-tag">进入工坊 ↗</span>
     </a>
 
-    <button type="button" class="replay-link" id="gate-replay" aria-label="重看开场动画">▶ 重看开场</button>
+    {% if request.GET.intro != '0' %}<button type="button" class="replay-link" id="gate-replay" aria-label="重看开场动画">▶ 重看开场</button>{% endif %}
     <a class="scroll-cue" href="#heritage-band" aria-label="向下阅读非遗剪纸介绍">向下，读懂这把剪刀 ↓</a>
   </div>
 </section>
@@ -81,8 +81,7 @@
 {% block extra_head %}
 <link rel="preload" as="image" href="{% static 'core/media/bg-stage-1920.webp' %}" media="(min-width: 1680px)">
 <link rel="preload" as="image" href="{% static 'core/media/bg-stage-1440.webp' %}" media="(min-width: 1081px) and (max-width: 1679px)">
-<link rel="preload" as="image" href="{% static 'core/media/bg-stage-1080.webp' %}" media="(min-width: 761px) and (max-width: 1080px)">
-<link rel="preload" as="image" href="{% static 'core/media/bg-stage-720.webp' %}" media="(max-width: 760px)">
+<link rel="preload" as="image" href="{% static 'core/media/bg-stage-1080.webp' %}" media="(min-width: 901px) and (max-width: 1080px)">
 <script type="module" src="{% static 'core/js/intro-gate.js' %}"></script>
 <script defer src="{% static 'core/js/pop-defer.js' %}"></script>
 {% endblock %}
