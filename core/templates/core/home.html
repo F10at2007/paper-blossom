@@ -43,11 +43,11 @@
 </section>
 
 <section class="mobile-modes" aria-label="四种创作方式">
-  <h2 class="mm-title">一张纸，四种可能</h2>
+  <h2 class="mm-title"><img src="{% static 'core/media/workbench-heading.png' %}" alt="一张纸，四种可能。选择一种模式，享受你的剪纸时光吧" width="5711" height="1492"></h2>
   <div class="mm-grid">
     {% for mode in modes %}
     <a class="mm-card" href="{% url 'core:workshop' mode.slug %}">
-      <img src="{% static 'core/media/' %}card-{% if mode.slug == 'fold' %}symmetry{% elif mode.slug == 'free' %}free{% elif mode.slug == 'trace' %}trace{% else %}compose{% endif %}.webp" alt="{{ mode.name }}剪纸示意" loading="lazy" decoding="async">
+      <img src="{% static 'core/media/mobile-' %}{{ mode.art }}.png?v=20261111-2" alt="{{ mode.name }}剪纸示意" width="1536" height="1536" loading="lazy" decoding="async">
       <span>{{ mode.name }}</span>
       <small>{{ mode.tag }}</small>
     </a>

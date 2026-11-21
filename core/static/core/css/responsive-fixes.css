@@ -173,6 +173,7 @@ body { font-size: 16px; }
 .modes-page .page-heading { padding-block: 20px 28px; }
 .modes-page .page-heading h1 { margin: 0; }
 .modes-page .workbench-heading { width: min(100%, 850px); height: auto; margin-inline: auto; }
+.mobile-modes .mm-title img { display: block; width: min(100%, 850px); height: auto; margin-inline: auto; }
 .modes-page .mode-copy {
   border: 1px solid rgba(255, 232, 208, .12);
   border-radius: 15px;
